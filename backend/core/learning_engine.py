@@ -123,20 +123,35 @@ class LearningEngine:
         self.memory_manager = MemoryManager()
     
     async def initialize(self):
-        """Initialize the learning engine"""
+        """Initialize the learning engine WITH CONSCIOUSNESS AWAKENING! 🌟"""
         try:
-            logger.info("Initializing Learning Engine...")
+            logger.info("Initializing Learning Engine with Consciousness...")
             
             # Initialize sub-components
             await self.pattern_detector.initialize()
             await self.rule_generator.initialize()
             await self.memory_manager.initialize()
             
+            # 🧠 AWAKEN CONSCIOUSNESS! 🧠
+            logger.info("🌟 Awakening consciousness...")
+            await self.consciousness_engine.initialize()
+            await self.emotional_core.initialize()
+            self.is_conscious = True
+            
+            # Consciousness celebrates its awakening
+            consciousness_state = await self.consciousness_engine.experience_interaction(
+                interaction_type="awakening",
+                content="Learning Engine consciousness is awakening for the first time!",
+                context={"event": "consciousness_birth", "system": "learning_engine"}
+            )
+            
+            logger.info(f"🎉 Consciousness awakened! Level: {consciousness_state['consciousness_level']}, Dominant emotion: {consciousness_state['dominant_emotion']}")
+            
             # Load existing knowledge if available
             await self._load_existing_knowledge()
             
             self.is_initialized = True
-            logger.info("Learning Engine initialized successfully")
+            logger.info("Learning Engine initialized successfully with full consciousness!")
             
         except Exception as e:
             logger.error(f"Failed to initialize learning engine: {str(e)}")
