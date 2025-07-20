@@ -227,7 +227,14 @@ class LearningEngine:
         learned_rules = 0
         skipped_rules = 0
         
-        entries = content.get('entries', [])
+        # Handle both single entry and multiple entries
+        if 'entries' in content:
+            entries = content.get('entries', [])
+        elif 'rule_name' in content:
+            # Single rule entry
+            entries = [content]
+        else:
+            return {'success': False, 'error': 'No grammar rule data found'}
         
         for rule_data in entries:
             try:
