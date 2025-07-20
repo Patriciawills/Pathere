@@ -153,16 +153,20 @@ class LearningEngine:
         """
         Learn vocabulary from dictionary entries
         """
+        logger.info(f"Learning vocabulary - content keys: {list(content.keys())}")
         learned_words = 0
         skipped_words = 0
         
         # Handle both single entry and multiple entries
         if 'entries' in content:
             entries = content.get('entries', [])
+            logger.info(f"Using entries format: {len(entries)} entries")
         elif 'word' in content:
             # Single word entry
             entries = [content]
+            logger.info(f"Using single word format: {content.get('word')}")
         else:
+            logger.error(f"No vocabulary data found in content: {content}")
             return {'success': False, 'error': 'No vocabulary data found'}
         
         for entry in entries:
