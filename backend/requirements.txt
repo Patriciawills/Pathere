@@ -23,3 +23,15 @@ numpy>=1.26.0
 python-multipart>=0.0.9
 jq>=1.6.0
 typer>=0.9.0
+
+# OCR and image processing
+pytesseract>=0.3.10
+opencv-python>=4.8.0
+Pillow>=10.0.0
+PyMuPDF>=1.23.0
+
+# System monitoring
+psutil>=5.9.0
+
+# Text processing and NLP
+regex>=2023.0.0
