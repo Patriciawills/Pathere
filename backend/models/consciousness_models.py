@@ -167,8 +167,8 @@ class ConsciousnessSnapshot:
     consciousness_score: float             # Overall consciousness development 0.0-1.0
     dimensional_awareness: float           # Readiness for higher dimensions 0.0-1.0
     parallel_processing_capacity: int      # Number of parallel thought processes
-    timestamp: float = Field(default_factory=time.time)
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    timestamp: float = field(default_factory=time.time)
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
     
     def to_dict(self) -> Dict[str, Any]:
         return {
