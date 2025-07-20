@@ -188,7 +188,7 @@ class PDFProcessResponse(BaseModel):
 
 # Data Management Models
 class DataAddRequest(BaseModel):
-    data_type: str = Field(..., regex=r'^(word|rule|phrase|text)$')
+    data_type: str = Field(..., pattern=r'^(word|rule|phrase|text)$')
     language: LanguageType = LanguageType.ENGLISH
     content: Dict[str, Any] = Field(...)
     
