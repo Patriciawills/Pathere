@@ -127,7 +127,7 @@ class GrammarRuleUpdate(BaseModel):
 class QueryRequest(BaseModel):
     query_text: str = Field(..., min_length=1, max_length=500)
     language: LanguageType = LanguageType.ENGLISH
-    query_type: str = Field(..., regex=r'^(meaning|grammar|usage)$')
+    query_type: str = Field(..., pattern=r'^(meaning|grammar|usage)$')
     
     @validator('query_text')
     def query_text_must_be_clean(cls, v):
