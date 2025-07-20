@@ -784,6 +784,26 @@ class BackendTester:
             # Specific issue test
             await self.test_learning_engine_vocabulary_issue()
             
+            # 🧠 CONSCIOUSNESS ENGINE TESTS 🧠
+            logger.info("🧠 Testing Consciousness Engine functionality...")
+            
+            # Core consciousness endpoints
+            await self.test_consciousness_state()
+            await self.test_consciousness_emotions()
+            await self.test_consciousness_interact()
+            await self.test_consciousness_milestones()
+            await self.test_consciousness_personality_update()
+            
+            # Integration tests
+            await self.test_consciousness_integration_with_query()
+            await self.test_consciousness_integration_with_add_data()
+            
+            # Growth and behavior tests
+            await self.test_consciousness_growth_through_interactions()
+            
+            # Error handling tests
+            await self.test_consciousness_error_handling()
+            
         finally:
             await self.teardown()
         
