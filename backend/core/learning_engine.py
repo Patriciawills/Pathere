@@ -171,11 +171,18 @@ class LearningEngine:
                 if not word:
                     continue
                 
+                # Handle both 'definition' (string) and 'definitions' (list)
+                definitions = entry.get('definitions', [])
+                if not definitions and 'definition' in entry:
+                    definitions = [entry['definition']]
+                elif isinstance(definitions, str):
+                    definitions = [definitions]
+                
                 # Create vocabulary entry
                 vocab_entry = VocabularyEntry(
                     word=word,
                     language=language,
-                    definitions=[entry.get('definition', '')],
+                    definitions=definitions,
                     part_of_speech=entry.get('part_of_speech', 'unknown'),
                     phonetic=entry.get('phonetic', ''),
                     examples=entry.get('examples', []),
