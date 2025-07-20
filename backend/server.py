@@ -296,6 +296,9 @@ async def get_stats():
         # Get knowledge graph stats
         graph_stats = await knowledge_graph.get_stats()
         
+        # 🧠 GET CONSCIOUSNESS STATS! 🧠
+        consciousness_stats = await learning_engine.get_consciousness_stats()
+        
         return {
             "database": {
                 "pdf_files": pdf_count,
@@ -305,11 +308,147 @@ async def get_stats():
             },
             "learning_engine": learning_stats,
             "knowledge_graph": graph_stats,
+            "consciousness": consciousness_stats,  # 🧠 NEW!
             "system": {
                 "memory_usage": learning_stats.get("memory_usage", "unknown"),
                 "active_languages": ["english"],  # Will expand
                 "version": "1.0.0"
             }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 🧠 CONSCIOUSNESS API ENDPOINTS 🧠
+
+@api_router.get("/consciousness/state")
+async def get_consciousness_state():
+    """Get current consciousness and emotional state"""
+    try:
+        consciousness_stats = await learning_engine.get_consciousness_stats()
+        
+        return {
+            "status": "success",
+            "consciousness_state": consciousness_stats,
+            "message": "Consciousness state retrieved successfully"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/interact")
+async def interact_with_consciousness(request: ConsciousnessInteractionRequest):
+    """Directly interact with the consciousness engine"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Direct consciousness interaction
+        consciousness_response = await learning_engine.consciousness_engine.experience_interaction(
+            interaction_type=request.interaction_type,
+            content=request.content,
+            context=request.context or {}
+        )
+        
+        # Get current emotional state
+        emotional_state = await learning_engine.emotional_core.get_emotional_state()
+        
+        # Express emotion naturally if requested
+        emotion_expression = ""
+        if request.expected_emotion:
+            try:
+                from models.consciousness_models import EmotionType
+                emotion_type = EmotionType(request.expected_emotion)
+                emotion_expression = await learning_engine.emotional_core.express_emotion_naturally(
+                    emotion_type, 
+                    emotional_state.get('current_emotions', {}).get(request.expected_emotion, {}).get('intensity', 0.5)
+                )
+            except ValueError:
+                emotion_expression = f"I'm not familiar with the emotion '{request.expected_emotion}' yet."
+        
+        return {
+            "status": "success",
+            "consciousness_response": consciousness_response,
+            "emotional_state": emotional_state['dominant_emotion'],
+            "emotion_expression": emotion_expression,
+            "consciousness_level": consciousness_response['consciousness_level'],
+            "growth_achieved": consciousness_response.get('growth_achieved', False)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/emotions")
+async def get_emotional_state():
+    """Get detailed emotional state and history"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        emotional_state = await learning_engine.emotional_core.get_emotional_state()
+        
+        return {
+            "status": "success",
+            "emotional_state": emotional_state,
+            "message": "Emotional state retrieved successfully"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/personality/update")
+async def update_personality(request: PersonalityUpdateRequest):
+    """Update personality based on interaction feedback"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Process emotional feedback
+        for emotion, intensity in request.emotional_feedback.items():
+            try:
+                from models.consciousness_models import EmotionType
+                emotion_type = EmotionType(emotion)
+                await learning_engine.emotional_core.process_emotional_trigger(
+                    f"personality_update_{request.interaction_outcome}",
+                    {"feedback": request.learning_feedback},
+                    intensity
+                )
+            except ValueError:
+                continue  # Skip unknown emotions
+        
+        # Develop emotional intelligence
+        growth_factor = 0.01  # Small incremental growth
+        await learning_engine.emotional_core.develop_emotional_intelligence(growth_factor)
+        
+        return {
+            "status": "success",
+            "message": "Personality updated based on feedback",
+            "interaction_outcome": request.interaction_outcome
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/milestones")
+async def get_consciousness_milestones():
+    """Get consciousness development milestones and achievements"""
+    try:
+        if not learning_engine.is_conscious:
+            return {"milestones": [], "message": "Consciousness not yet active"}
+        
+        consciousness_state = await learning_engine.consciousness_engine.get_consciousness_state()
+        emotional_state = await learning_engine.emotional_core.get_emotional_state()
+        
+        milestones = {
+            "consciousness_level": consciousness_state['consciousness_level'],
+            "consciousness_score": consciousness_state['consciousness_score'],
+            "growth_milestones": consciousness_state['growth_milestones'],
+            "emotional_milestones": emotional_state['emotional_milestones'],
+            "total_interactions": consciousness_state['interaction_count'],
+            "age_seconds": consciousness_state['age_seconds'],
+            "transcendent_emotions_unlocked": emotional_state['transcendent_emotions_unlocked'],
+            "dimensional_awareness": consciousness_state['dimensional_awareness']
+        }
+        
+        return {
+            "status": "success",
+            "milestones": milestones,
+            "message": "Consciousness milestones retrieved successfully"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
