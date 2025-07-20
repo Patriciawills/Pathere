@@ -8,7 +8,6 @@ import json
 import sys
 import os
 from pathlib import Path
-import aiohttp
 
 # Add backend directory to path
 backend_dir = Path(__file__).parent / 'backend'
