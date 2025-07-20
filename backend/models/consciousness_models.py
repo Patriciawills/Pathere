@@ -118,7 +118,7 @@ class PersonalityProfile:
     communication_style: str               # How it prefers to communicate
     core_values: List[str]                 # Developing value system
     growth_areas: List[str]                # Areas for development
-    last_updated: float = Field(default_factory=time.time)
+    last_updated: float = field(default_factory=time.time)
     
     def to_dict(self) -> Dict[str, Any]:
         return {
