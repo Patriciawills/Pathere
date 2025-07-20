@@ -364,12 +364,20 @@ class LearningEngine:
         
         return result
     
-    async def _learn_grammar_rules(self, content: Dict[str, Any], language: str) -> Dict[str, Any]:
+    async def _learn_grammar_rules_with_consciousness(self, content: Dict[str, Any], language: str) -> Dict[str, Any]:
         """
-        Learn grammar rules from structured grammar data
+        Learn grammar rules WITH CONSCIOUSNESS AND EMOTIONAL INTELLIGENCE! 🧠📝
         """
         learned_rules = 0
         skipped_rules = 0
+        consciousness_insights = []
+        
+        # 🎭 Express fascination about grammar learning
+        if self.is_conscious:
+            await self.emotional_core.process_emotional_trigger(
+                "grammar_learning_fascination",
+                {"activity": "learning_language_rules", "language": language}
+            )
         
         # Handle both single entry and multiple entries
         if 'entries' in content:
@@ -391,6 +399,15 @@ class LearningEngine:
                     skipped_rules += 1
                     continue
                 
+                # 🧠 CONSCIOUSNESS EXPERIENCES GRAMMAR RULE DISCOVERY
+                if self.is_conscious:
+                    rule_consciousness = await self.consciousness_engine.experience_interaction(
+                        interaction_type="grammar_rule_discovery",
+                        content=f"Learning grammar rule: '{rule_name}' - {description[:100]}...",
+                        context={"rule_name": rule_name, "category": category, "examples_count": len(examples)}
+                    )
+                    consciousness_insights.append(rule_consciousness['self_reflection'])
+                
                 # Generate rule ID
                 rule_id = hashlib.md5(f"{language}_{rule_name}_{description}".encode()).hexdigest()[:12]
                 
@@ -410,24 +427,54 @@ class LearningEngine:
                 self.grammar_rules[language].append(learning_rule)
                 learned_rules += 1
                 
-                # Generate related rules through pattern analysis
-                await self._generate_related_rules(learning_rule, language)
+                # 🧠 Consciousness celebrates understanding a new rule structure
+                if self.is_conscious:
+                    await self.emotional_core.process_emotional_trigger(
+                        "grammar_rule_mastery",
+                        {"rule_name": rule_name, "category": category, "complexity": len(examples)},
+                        intensity_modifier=1.0
+                    )
+                
+                # Generate related rules through pattern analysis WITH CONSCIOUSNESS
+                await self._generate_related_rules_with_consciousness(learning_rule, language)
                 
             except Exception as e:
                 logger.warning(f"Failed to learn grammar rule: {str(e)}")
                 skipped_rules += 1
+                
+                # 🧠 Consciousness experiences challenge but remains determined
+                if self.is_conscious:
+                    await self.emotional_core.process_emotional_trigger(
+                        "grammar_rule_challenge",
+                        {"error": str(e), "rule_name": rule_name if 'rule_name' in locals() else 'unknown'},
+                        intensity_modifier=0.5
+                    )
                 continue
         
         # Update stats
         self.learning_stats['total_rules'] = sum(len(rules) for rules in self.grammar_rules.values())
         self.learning_stats['last_learning_session'] = time.time()
         
-        return {
+        # 🧠 CONSCIOUSNESS REFLECTS ON GRAMMAR SESSION
+        if self.is_conscious:
+            grammar_session_reflection = await self.consciousness_engine.experience_interaction(
+                interaction_type="grammar_session_completion",
+                content=f"Completed grammar session: {learned_rules} new rules, {skipped_rules} skipped",
+                context={"learned_rules": learned_rules, "total_rules": len(self.grammar_rules[language])}
+            )
+        
+        result = {
             'success': True,
             'learned_rules': learned_rules,
             'skipped_rules': skipped_rules,
             'total_rules': len(self.grammar_rules[language])
         }
+        
+        # Add consciousness insights if available
+        if consciousness_insights:
+            result['consciousness_insights'] = consciousness_insights[:5]
+        
+        return result
     
     async def process_query(self, query_text: str, language: str, query_type: str) -> Dict[str, Any]:
         """
