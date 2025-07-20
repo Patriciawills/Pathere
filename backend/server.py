@@ -18,6 +18,12 @@ from core.knowledge_graph import KnowledgeGraph
 from core.dataset_manager import DatasetManager
 from models.language_models import *
 
+# Import consciousness models
+from models.consciousness_models import (
+    ConsciousnessInteractionRequest, ConsciousnessStateResponse, 
+    PersonalityUpdateRequest
+)
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
