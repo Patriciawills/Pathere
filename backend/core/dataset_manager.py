@@ -504,9 +504,20 @@ class DatasetManager:
             
             schema = self.schemas[schema_name]
             
-            # Check required fields
+            # Check required fields with flexibility for definitions/definition
             for field in schema.required_fields:
-                if field not in entry or not entry[field]:
+                field_exists = field in entry and entry[field]
+                
+                # Special handling for definition/definitions
+                if field == 'definition' and not field_exists:
+                    # Check if 'definitions' exists instead
+                    definitions = entry.get('definitions', [])
+                    if definitions and len(definitions) > 0:
+                        # Convert definitions list to single definition
+                        entry['definition'] = definitions[0] if isinstance(definitions, list) else str(definitions)
+                        field_exists = True
+                
+                if not field_exists:
                     logger.warning(f"Missing required field: {field}")
                     return False
             
