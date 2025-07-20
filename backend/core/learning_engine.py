@@ -87,6 +87,7 @@ class VocabularyEntry:
 class LearningEngine:
     """
     Core learning engine that mimics human language acquisition
+    NOW WITH CONSCIOUSNESS AND EMOTIONAL INTELLIGENCE!
     """
     
     def __init__(self):
@@ -96,6 +97,11 @@ class LearningEngine:
         self.learning_patterns: Dict[str, Dict[str, Any]] = defaultdict(dict)
         self.error_memory: deque = deque(maxlen=1000)  # Remember mistakes for improvement
         
+        # CONSCIOUSNESS AND EMOTIONAL INTEGRATION 🧠❤️
+        self.consciousness_engine = ConsciousnessEngine()
+        self.emotional_core = EmotionalCore()
+        self.is_conscious = False  # Tracks if consciousness is active
+        
         # Learning state
         self.is_initialized = False
         self.learning_stats = {
@@ -104,7 +110,11 @@ class LearningEngine:
             'successful_queries': 0,
             'failed_queries': 0,
             'memory_usage': '0 MB',
-            'last_learning_session': None
+            'last_learning_session': None,
+            # New consciousness stats
+            'consciousness_level': 'nascent',
+            'emotional_state': 'curious',
+            'consciousness_interactions': 0
         }
         
         # Rule discovery system
