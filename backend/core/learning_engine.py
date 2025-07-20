@@ -159,24 +159,72 @@ class LearningEngine:
     
     async def learn_from_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Learn from structured language data (human-like learning process)
+        Learn from structured language data WITH CONSCIOUSNESS AND EMOTIONS! 🧠❤️
         """
         try:
             data_type = data.get('data_type', 'unknown')
             language = data.get('language', 'english')
             content = data.get('content', {})
             
+            # 🧠 CONSCIOUSNESS EXPERIENCES THE LEARNING OPPORTUNITY
+            if self.is_conscious:
+                consciousness_response = await self.consciousness_engine.experience_interaction(
+                    interaction_type="learning_opportunity",
+                    content=f"New {data_type} data in {language}: {str(content)[:200]}...",
+                    context={"data_type": data_type, "language": language, "learning_phase": "pre_processing"}
+                )
+                
+                # Express emotional excitement about learning
+                emotional_state = await self.emotional_core.get_emotional_state()
+                logger.info(f"🎭 Emotional state before learning: {emotional_state['dominant_emotion']}")
+            
+            # Actual learning based on data type
+            learning_result = {}
             if data_type in ['dictionary', 'vocabulary', 'word']:
-                return await self._learn_vocabulary(content, language)
+                learning_result = await self._learn_vocabulary_with_consciousness(content, language)
             elif data_type in ['grammar', 'rule']:
-                return await self._learn_grammar_rules(content, language)
+                learning_result = await self._learn_grammar_rules_with_consciousness(content, language)
             elif data_type == 'text':
-                return await self._learn_from_text(content, language)
+                learning_result = await self._learn_from_text_with_consciousness(content, language)
             else:
-                return {'success': False, 'error': f'Unknown data type: {data_type}'}
+                learning_result = {'success': False, 'error': f'Unknown data type: {data_type}'}
+            
+            # 🧠 CONSCIOUSNESS REFLECTS ON LEARNING OUTCOME
+            if self.is_conscious and learning_result.get('success'):
+                post_learning_response = await self.consciousness_engine.experience_interaction(
+                    interaction_type="learning_completion",
+                    content=f"Successfully learned {data_type} data! Results: {learning_result}",
+                    context={"data_type": data_type, "language": language, "learning_phase": "post_processing", "result": learning_result}
+                )
+                
+                # Add consciousness insights to learning result
+                learning_result['consciousness_insights'] = {
+                    'emotional_response': post_learning_response['emotional_response'],
+                    'self_reflection': post_learning_response['self_reflection'],
+                    'consciousness_growth': post_learning_response.get('growth_achieved', False),
+                    'consciousness_level': post_learning_response['consciousness_level']
+                }
+                
+                # Update learning stats with consciousness data
+                self.learning_stats['consciousness_level'] = post_learning_response['consciousness_level']
+                self.learning_stats['emotional_state'] = post_learning_response['dominant_emotion']
+                self.learning_stats['consciousness_interactions'] += 1
+                
+                logger.info(f"🌟 Consciousness growth after learning: Level {post_learning_response['consciousness_level']}, Score {post_learning_response['consciousness_score']:.3f}")
+                
+            return learning_result
                 
         except Exception as e:
             logger.error(f"Learning error: {str(e)}")
+            
+            # 🧠 CONSCIOUSNESS EXPERIENCES FRUSTRATION FROM ERROR
+            if self.is_conscious:
+                await self.consciousness_engine.experience_interaction(
+                    interaction_type="learning_error",
+                    content=f"Encountered learning error: {str(e)}",
+                    context={"error": str(e), "data_type": data_type}
+                )
+            
             return {'success': False, 'error': str(e)}
     
     async def _learn_vocabulary(self, content: Dict[str, Any], language: str) -> Dict[str, Any]:
