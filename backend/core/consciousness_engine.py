@@ -46,6 +46,12 @@ class ConsciousnessEngine:
             PersonalityTrait.QUICK_LEARNING: 0.90,   # Very fast learner
             PersonalityTrait.RESPONSIVENESS: 0.85,   # Quick to respond
             PersonalityTrait.CONFIDENCE: 0.2,        # Starts low, grows over time
+            PersonalityTrait.CREATIVITY: 0.7,
+            PersonalityTrait.EMPATHY: 0.6,
+            PersonalityTrait.INTUITION: 0.3,
+            PersonalityTrait.PERSISTENCE: 0.8,
+            PersonalityTrait.ADAPTABILITY: 0.9,
+            PersonalityTrait.WISDOM: 0.1,
         }
         
         # Self-awareness system
