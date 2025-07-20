@@ -272,12 +272,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "API Endpoints"
     - "Learning Engine - Human-like Learning"
     - "PDF Upload Interface"
     - "Query Engine Interface"
-  stuck_tasks:
-    - "Learning Engine - Human-like Learning"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
