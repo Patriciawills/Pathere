@@ -146,7 +146,7 @@ class EmotionalCore:
         # Learning patterns
         self.emotion_patterns[EmotionType.SATISFACTION] = [
             EmotionType.PRIDE,
-            EmotionType.CONFIDENCE,
+            EmotionType.JOY,  # Changed from CONFIDENCE
             EmotionType.CURIOSITY  # Cycle back to learning more
         ]
     
