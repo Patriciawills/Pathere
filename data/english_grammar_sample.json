@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "source": "Oxford Grammar Sample",
+    "language": "english",
+    "version": "1.0",
+    "rule_count": 15,
+    "created_at": "2025-01-27"
+  },
+  "entries": [
+    {
+      "rule_name": "Present Simple Tense",
+      "description": "The present simple tense is used to describe habitual actions, general truths, and scheduled events in the present",
+      "category": "tense",
+      "examples": [
+        "I walk to school every day",
+        "The sun rises in the east",
+        "The train leaves at 9 AM"
+      ],
+      "exceptions": [
+        "Third person singular adds -s: He walks",
+        "Verbs ending in -y change to -ies: He studies"
+      ]
+    },
+    {
+      "rule_name": "Past Simple Tense",
+      "description": "The past simple tense is used to describe completed actions in the past at a specific time",
+      "category": "tense",
+      "examples": [
+        "I walked to school yesterday",
+        "She studied French last year",
+        "They visited Paris in 2020"
+      ],
+      "exceptions": [
+        "Irregular verbs have unique past forms: go -> went",
+        "Regular verbs add -ed: walk -> walked"
+      ]
+    },
+    {
+      "rule_name": "Plural Nouns",
+      "description": "Most nouns form plurals by adding -s or -es to the singular form",
+      "category": "noun",
+      "examples": [
+        "cat -> cats",
+        "box -> boxes",
+        "child -> children (irregular)"
+      ],
+      "exceptions": [
+        "Nouns ending in -y preceded by consonant change -y to -ies",
+        "Some nouns have irregular plural forms"
+      ]
+    },
+    {
+      "rule_name": "Subject-Verb Agreement",
+      "description": "The verb must agree with the subject in number and person",
+      "category": "syntax",
+      "examples": [
+        "She walks (singular subject, singular verb)",
+        "They walk (plural subject, plural verb)",
+        "The dog barks loudly"
+      ],
+      "exceptions": [
+        "Collective nouns can take singular or plural verbs",
+        "Some subjects appear plural but take singular verbs"
+      ]
+    },
+    {
+      "rule_name": "Comparative Adjectives",
+      "description": "Comparative adjectives are used to compare two things",
+      "category": "adjective",
+      "examples": [
+        "This book is longer than that one",
+        "She is more intelligent than her brother",
+        "Today is better than yesterday"
+      ],
+      "exceptions": [
+        "One-syllable adjectives usually add -er",
+        "Multi-syllable adjectives use 'more'",
+        "Some adjectives have irregular comparatives"
+      ]
+    }
+  ]
+}
