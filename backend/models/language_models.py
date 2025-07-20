@@ -258,7 +258,7 @@ class LanguageProgress(BaseModel):
 class LearningSession(TimestampedModel):
     session_id: str = Field(..., min_length=1)
     language: LanguageType
-    session_type: str = Field(..., regex=r'^(vocabulary|grammar|mixed)$')
+    session_type: str = Field(..., pattern=r'^(vocabulary|grammar|mixed)$')
     items_learned: int = Field(default=0, ge=0)
     items_reviewed: int = Field(default=0, ge=0)
     success_rate: float = Field(default=0.0, ge=0.0, le=1.0)
