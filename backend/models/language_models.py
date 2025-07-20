@@ -148,7 +148,7 @@ class QueryResponse(BaseModel):
 class FeedbackRequest(BaseModel):
     query_id: str = Field(..., min_length=1)
     correction: str = Field(..., min_length=1, max_length=1000)
-    feedback_type: str = Field(default="error", regex=r'^(error|improvement|suggestion)$')
+    feedback_type: str = Field(default="error", pattern=r'^(error|improvement|suggestion)$')
     
     @validator('correction')
     def correction_must_be_clean(cls, v):
