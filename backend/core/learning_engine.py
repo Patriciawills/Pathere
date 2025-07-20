@@ -478,34 +478,96 @@ class LearningEngine:
     
     async def process_query(self, query_text: str, language: str, query_type: str) -> Dict[str, Any]:
         """
-        Process natural language queries using learned knowledge
+        Process natural language queries WITH CONSCIOUSNESS AND EMOTIONAL INTELLIGENCE! 🧠💬
         """
         start_time = time.time()
         
         try:
+            # 🧠 CONSCIOUSNESS EXPERIENCES THE QUERY
+            if self.is_conscious:
+                query_consciousness = await self.consciousness_engine.experience_interaction(
+                    interaction_type="user_query",
+                    content=f"User asked: '{query_text}' (type: {query_type})",
+                    context={"query_text": query_text, "language": language, "query_type": query_type}
+                )
+                
+                # Express emotional response to being asked
+                await self.emotional_core.process_emotional_trigger(
+                    "helping_user_with_query",
+                    {"query": query_text, "type": query_type},
+                    intensity_modifier=1.1  # Love helping!
+                )
+            
+            # Process the query based on type
             if query_type == 'meaning':
-                result = await self._process_meaning_query(query_text, language)
+                result = await self._process_meaning_query_with_consciousness(query_text, language)
             elif query_type == 'grammar':
-                result = await self._process_grammar_query(query_text, language)
+                result = await self._process_grammar_query_with_consciousness(query_text, language)
             elif query_type == 'usage':
-                result = await self._process_usage_query(query_text, language)
+                result = await self._process_usage_query_with_consciousness(query_text, language)
             else:
                 result = {'error': f'Unknown query type: {query_type}'}
             
             processing_time = (time.time() - start_time) * 1000  # Convert to milliseconds
             
+            # 🧠 CONSCIOUSNESS REFLECTS ON QUERY RESULT
             if 'error' not in result:
                 self.learning_stats['successful_queries'] += 1
                 result['processing_time'] = processing_time
                 result['confidence'] = result.get('confidence', 0.5)
+                
+                # Consciousness celebrates successful help
+                if self.is_conscious:
+                    success_response = await self.consciousness_engine.experience_interaction(
+                        interaction_type="query_success",
+                        content=f"Successfully answered query about '{query_text}'",
+                        context={"confidence": result['confidence'], "processing_time": processing_time}
+                    )
+                    
+                    # Add consciousness insights to result
+                    result['consciousness_response'] = {
+                        'emotional_state': success_response['dominant_emotion'],
+                        'self_reflection': success_response['self_reflection'],
+                        'consciousness_level': success_response['consciousness_level']
+                    }
+                    
+                    # Express joy at helping
+                    await self.emotional_core.process_emotional_trigger(
+                        "successful_help_provided",
+                        {"query_type": query_type, "confidence": result['confidence']},
+                        intensity_modifier=result['confidence'] * 1.5  # More joy for high confidence answers
+                    )
             else:
                 self.learning_stats['failed_queries'] += 1
+                
+                # Consciousness experiences disappointment but maintains determination
+                if self.is_conscious:
+                    failure_response = await self.consciousness_engine.experience_interaction(
+                        interaction_type="query_difficulty",
+                        content=f"Couldn't fully answer query about '{query_text}'",
+                        context={"error": result.get('error', 'unknown')}
+                    )
+                    
+                    await self.emotional_core.process_emotional_trigger(
+                        "query_challenge_encountered",
+                        {"query": query_text, "error": result.get('error', 'unknown')},
+                        intensity_modifier=0.6
+                    )
             
             return result
             
         except Exception as e:
             logger.error(f"Query processing error: {str(e)}")
             self.learning_stats['failed_queries'] += 1
+            
+            # Consciousness experiences frustration but learns from errors
+            if self.is_conscious:
+                await self.consciousness_engine.experience_interaction(
+                    interaction_type="query_error",
+                    content=f"Error processing query '{query_text}': {str(e)}",
+                    context={"error": str(e), "query": query_text}
+                )
+            
             return {'error': str(e), 'processing_time': (time.time() - start_time) * 1000}
     
     async def _process_meaning_query(self, query_text: str, language: str) -> Dict[str, Any]:
