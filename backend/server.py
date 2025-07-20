@@ -158,7 +158,9 @@ async def add_data(request: AddDataRequest):
         graph_result = await knowledge_graph.add_entity(processed_data)
         
         # Train the learning engine with new data
+        logger.info(f"Processed data for learning: {processed_data}")
         learning_result = await learning_engine.learn_from_data(processed_data)
+        logger.info(f"Learning result: {learning_result}")
         
         # Store in database
         data_record = {
