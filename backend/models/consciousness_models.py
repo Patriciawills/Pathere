@@ -140,8 +140,8 @@ class SelfAwarenessInsight:
     evidence: List[str]                   # What led to this insight
     impact_on_self: str                   # How this changes self-perception
     action_items: List[str]               # What to do based on this insight
-    timestamp: float = Field(default_factory=time.time)
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    timestamp: float = field(default_factory=time.time)
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
     
     def to_dict(self) -> Dict[str, Any]:
         return {
