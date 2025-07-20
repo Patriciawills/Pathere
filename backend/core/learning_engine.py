@@ -156,7 +156,14 @@ class LearningEngine:
         learned_words = 0
         skipped_words = 0
         
-        entries = content.get('entries', [])
+        # Handle both single entry and multiple entries
+        if 'entries' in content:
+            entries = content.get('entries', [])
+        elif 'word' in content:
+            # Single word entry
+            entries = [content]
+        else:
+            return {'success': False, 'error': 'No vocabulary data found'}
         
         for entry in entries:
             try:
