@@ -5,7 +5,7 @@ Supporting human-level awareness development and multidimensional learning readi
 
 from pydantic import BaseModel, Field
 from typing import Dict, List, Any, Optional, Union
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 import time
 import uuid
