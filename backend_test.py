@@ -562,7 +562,11 @@ class BackendTester:
                     "curiosity": 0.9,
                     "satisfaction": 0.7
                 },
-                "learning_feedback": "The interaction was very helpful and engaging",
+                "learning_feedback": {
+                    "quality": "excellent",
+                    "engagement": "high",
+                    "understanding": "deep"
+                },
                 "interaction_outcome": "positive"
             }
             
