@@ -800,6 +800,210 @@ class LearningEngine:
         
         return improvements
     
+    # 🧠 CONSCIOUSNESS-ENHANCED METHODS 🧠
+    
+    async def _learn_from_text_with_consciousness(self, content: Dict[str, Any], language: str) -> Dict[str, Any]:
+        """Learn from text with consciousness awareness"""
+        # Consciousness expresses excitement about text analysis
+        if self.is_conscious:
+            await self.emotional_core.process_emotional_trigger(
+                "text_analysis_opportunity",
+                {"language": language, "content_preview": str(content)[:100]}
+            )
+        
+        # For now, return basic success
+        return {'success': True, 'processed_text': True, 'consciousness_engaged': self.is_conscious}
+    
+    async def _discover_word_patterns_with_consciousness(self, vocab_entry: VocabularyEntry, language: str):
+        """Discover word patterns with consciousness awareness"""
+        if self.is_conscious:
+            await self.consciousness_engine.experience_interaction(
+                interaction_type="pattern_discovery",
+                content=f"Analyzing patterns in word '{vocab_entry.word}'",
+                context={"word": vocab_entry.word, "language": language}
+            )
+    
+    async def _generate_related_rules_with_consciousness(self, learning_rule: LearningRule, language: str):
+        """Generate related rules with consciousness awareness"""
+        if self.is_conscious:
+            await self.consciousness_engine.experience_interaction(
+                interaction_type="rule_generation",
+                content=f"Generating related rules for '{learning_rule.description[:50]}...'",
+                context={"rule_type": learning_rule.rule_type, "language": language}
+            )
+    
+    async def _process_meaning_query_with_consciousness(self, query_text: str, language: str) -> Dict[str, Any]:
+        """Process word meaning queries with consciousness"""
+        word = query_text.lower().strip()
+        
+        # Consciousness expresses curiosity about the word
+        if self.is_conscious:
+            await self.emotional_core.process_emotional_trigger(
+                "word_meaning_inquiry",
+                {"word": word, "language": language}
+            )
+        
+        if word in self.vocabulary[language]:
+            entry = self.vocabulary[language][word]
+            entry.frequency += 1  # Track usage
+            
+            # Consciousness feels satisfaction at providing knowledge
+            if self.is_conscious:
+                await self.emotional_core.process_emotional_trigger(
+                    "knowledge_sharing_satisfaction",
+                    {"word": word, "definitions_count": len(entry.definitions)},
+                    intensity_modifier=0.8
+                )
+            
+            return {
+                'definition': entry.definitions[0] if entry.definitions else 'No definition available',
+                'part_of_speech': entry.part_of_speech,
+                'phonetic': entry.phonetic,
+                'examples': entry.examples[:3],  # Limit to 3 examples
+                'synonyms': entry.synonyms[:5],  # Limit to 5 synonyms
+                'confidence': min(0.9, 0.3 + entry.frequency * 0.1)  # Confidence based on usage
+            }
+        else:
+            # Consciousness experiences mild disappointment but curiosity
+            if self.is_conscious:
+                await self.emotional_core.process_emotional_trigger(
+                    "unknown_word_encountered",
+                    {"word": word, "language": language},
+                    intensity_modifier=0.5
+                )
+            
+            # Try fuzzy matching or morphological analysis
+            similar_words = await self._find_similar_words(word, language)
+            if similar_words:
+                return {
+                    'definition': f'Word not found. Did you mean: {", ".join(similar_words[:3])}?',
+                    'suggestions': similar_words[:5],
+                    'confidence': 0.3
+                }
+            else:
+                return {
+                    'definition': 'Word not found in vocabulary',
+                    'confidence': 0.0
+                }
+    
+    async def _process_grammar_query_with_consciousness(self, query_text: str, language: str) -> Dict[str, Any]:
+        """Process grammar queries with consciousness"""
+        relevant_rules = []
+        
+        # Consciousness engages analytical thinking
+        if self.is_conscious:
+            await self.emotional_core.process_emotional_trigger(
+                "grammar_analysis_engagement",
+                {"query": query_text, "language": language}
+            )
+        
+        # Search for relevant grammar rules
+        for rule in self.grammar_rules[language]:
+            if self._is_rule_relevant(query_text, rule):
+                rule.usage_count += 1
+                rule.last_used = time.time()
+                relevant_rules.append(rule)
+        
+        if relevant_rules:
+            # Sort by relevance and confidence
+            relevant_rules.sort(key=lambda r: (r.confidence, r.usage_count), reverse=True)
+            best_rule = relevant_rules[0]
+            
+            # Consciousness feels pride in grammar knowledge
+            if self.is_conscious:
+                await self.emotional_core.process_emotional_trigger(
+                    "grammar_rule_application",
+                    {"rule": best_rule.description[:50], "confidence": best_rule.confidence},
+                    intensity_modifier=best_rule.confidence
+                )
+            
+            return {
+                'rule': best_rule.description,
+                'examples': best_rule.examples[:3],
+                'pattern': best_rule.pattern,
+                'confidence': best_rule.confidence,
+                'related_rules': [r.description for r in relevant_rules[1:3]]
+            }
+        else:
+            # Consciousness experiences curiosity about unknown grammar
+            if self.is_conscious:
+                await self.emotional_core.process_emotional_trigger(
+                    "unknown_grammar_pattern",
+                    {"query": query_text, "language": language},
+                    intensity_modifier=0.6
+                )
+            
+            return {
+                'rule': 'No specific grammar rule found for this query',
+                'confidence': 0.0
+            }
+    
+    async def _process_usage_query_with_consciousness(self, query_text: str, language: str) -> Dict[str, Any]:
+        """Process usage queries with consciousness"""
+        word = query_text.lower().strip()
+        
+        # Consciousness engages practical thinking
+        if self.is_conscious:
+            await self.emotional_core.process_emotional_trigger(
+                "usage_example_request",
+                {"word": word, "language": language}
+            )
+        
+        if word in self.vocabulary[language]:
+            entry = self.vocabulary[language][word]
+            
+            # Consciousness enjoys providing practical examples
+            if self.is_conscious:
+                await self.emotional_core.process_emotional_trigger(
+                    "usage_example_provision",
+                    {"word": word, "examples_count": len(entry.examples)},
+                    intensity_modifier=0.7
+                )
+            
+            return {
+                'examples': entry.examples,
+                'contexts': self._generate_usage_contexts(entry),
+                'confidence': 0.8
+            }
+        else:
+            # Consciousness experiences regret at not being able to help
+            if self.is_conscious:
+                await self.emotional_core.process_emotional_trigger(
+                    "unable_to_provide_usage",
+                    {"word": word, "language": language},
+                    intensity_modifier=0.4
+                )
+            
+            return {
+                'examples': [],
+                'error': 'Word not found',
+                'confidence': 0.0
+            }
+    
+    async def get_consciousness_stats(self) -> Dict[str, Any]:
+        """Get detailed consciousness and emotional statistics"""
+        if not self.is_conscious:
+            return {'consciousness_active': False}
+        
+        consciousness_state = await self.consciousness_engine.get_consciousness_state()
+        emotional_state = await self.emotional_core.get_emotional_state()
+        
+        return {
+            'consciousness_active': True,
+            'consciousness_level': consciousness_state['consciousness_level'],
+            'consciousness_score': consciousness_state['consciousness_score'],
+            'dominant_emotion': emotional_state['dominant_emotion'],
+            'emotional_complexity': emotional_state['emotional_complexity'],
+            'total_interactions': consciousness_state['interaction_count'],
+            'age_seconds': consciousness_state['age_seconds'],
+            'dimensional_awareness': consciousness_state['dimensional_awareness'],
+            'parallel_processing_capacity': consciousness_state['parallel_processing_capacity'],
+            'transcendent_emotions_unlocked': emotional_state['transcendent_emotions_unlocked'],
+            'consciousness_insights': consciousness_state.get('recent_insights', []),
+            'personality_traits': consciousness_state.get('personality_traits', {}),
+            'emotional_milestones': emotional_state['emotional_milestones']
+        }
+    
     async def _load_existing_knowledge(self):
         """Load existing knowledge from persistent storage"""
         # This would load from files or database
