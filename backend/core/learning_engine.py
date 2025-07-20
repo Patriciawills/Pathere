@@ -15,6 +15,11 @@ import os
 from pathlib import Path
 import hashlib
 
+# Import consciousness components
+from .consciousness_engine import ConsciousnessEngine
+from .emotional_core import EmotionalCore
+from models.consciousness_models import EmotionType, ConsciousnessLevel
+
 logger = logging.getLogger(__name__)
 
 @dataclass
