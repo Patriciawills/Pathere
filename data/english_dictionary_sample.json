@@ -1,0 +1,72 @@
+{
+  "metadata": {
+    "source": "Oxford Dictionary Sample",
+    "language": "english",
+    "version": "1.0",
+    "entry_count": 20,
+    "created_at": "2025-01-27"
+  },
+  "entries": [
+    {
+      "word": "language",
+      "definition": "the method of human communication, either spoken or written, consisting of the use of words in a structured and conventional way",
+      "phonetic": "/ˈlæŋɡwɪdʒ/",
+      "part_of_speech": "noun",
+      "examples": [
+        "The English language is spoken worldwide",
+        "She studied several foreign languages"
+      ],
+      "synonyms": ["tongue", "speech", "dialect", "communication"],
+      "antonyms": ["silence"]
+    },
+    {
+      "word": "learn",
+      "definition": "acquire knowledge or skill in (something) by study, experience, or being taught",
+      "phonetic": "/lɜːn/",
+      "part_of_speech": "verb",
+      "examples": [
+        "I learned to drive when I was seventeen",
+        "She's learning Spanish",
+        "We learn from our mistakes"
+      ],
+      "synonyms": ["study", "master", "grasp", "acquire", "absorb"],
+      "antonyms": ["forget", "unlearn"]
+    },
+    {
+      "word": "grammar",
+      "definition": "the whole system and structure of a language or of languages in general, usually taken as consisting of syntax and morphology",
+      "phonetic": "/ˈɡræmə/",
+      "part_of_speech": "noun",
+      "examples": [
+        "English grammar can be quite complex",
+        "She teaches grammar to elementary students"
+      ],
+      "synonyms": ["syntax", "structure", "rules", "linguistics"],
+      "antonyms": []
+    },
+    {
+      "word": "vocabulary",
+      "definition": "the body of words used in a particular language",
+      "phonetic": "/vəˈkæbjʊləri/",
+      "part_of_speech": "noun",
+      "examples": [
+        "Reading helps expand your vocabulary",
+        "Medical vocabulary can be difficult to understand"
+      ],
+      "synonyms": ["lexicon", "terminology", "words"],
+      "antonyms": []
+    },
+    {
+      "word": "understand",
+      "definition": "perceive the intended meaning of (words, a language, or a speaker)",
+      "phonetic": "/ˌʌndəˈstænd/",
+      "part_of_speech": "verb",
+      "examples": [
+        "I understand what you're saying",
+        "Do you understand the instructions?"
+      ],
+      "synonyms": ["comprehend", "grasp", "perceive", "realize"],
+      "antonyms": ["misunderstand", "confuse"]
+    }
+  ]
+}
