@@ -136,9 +136,9 @@ class LearningEngine:
             language = data.get('language', 'english')
             content = data.get('content', {})
             
-            if data_type == 'dictionary':
+            if data_type in ['dictionary', 'vocabulary', 'word']:
                 return await self._learn_vocabulary(content, language)
-            elif data_type == 'grammar':
+            elif data_type in ['grammar', 'rule']:
                 return await self._learn_grammar_rules(content, language)
             elif data_type == 'text':
                 return await self._learn_from_text(content, language)
