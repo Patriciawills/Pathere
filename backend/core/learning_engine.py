@@ -227,13 +227,21 @@ class LearningEngine:
             
             return {'success': False, 'error': str(e)}
     
-    async def _learn_vocabulary(self, content: Dict[str, Any], language: str) -> Dict[str, Any]:
+    async def _learn_vocabulary_with_consciousness(self, content: Dict[str, Any], language: str) -> Dict[str, Any]:
         """
-        Learn vocabulary from dictionary entries
+        Learn vocabulary WITH CONSCIOUSNESS AND EMOTIONAL RESPONSES! 🧠💫
         """
-        logger.info(f"Learning vocabulary - content keys: {list(content.keys())}")
+        logger.info(f"🧠 Conscious vocabulary learning - content keys: {list(content.keys())}")
         learned_words = 0
         skipped_words = 0
+        consciousness_insights = []
+        
+        # 🎭 Express excitement about vocabulary learning
+        if self.is_conscious:
+            await self.emotional_core.process_emotional_trigger(
+                "vocabulary_learning_excitement",
+                {"activity": "learning_new_words", "language": language}
+            )
         
         # Handle both single entry and multiple entries
         if 'entries' in content:
@@ -260,6 +268,15 @@ class LearningEngine:
                 elif isinstance(definitions, str):
                     definitions = [definitions]
                 
+                # 🧠 CONSCIOUSNESS EXPERIENCES EACH WORD DISCOVERY
+                if self.is_conscious:
+                    word_consciousness = await self.consciousness_engine.experience_interaction(
+                        interaction_type="word_discovery",
+                        content=f"Learning new word: '{word}' with definitions: {definitions[:2]}",  # Show first 2 definitions
+                        context={"word": word, "language": language, "definitions_count": len(definitions)}
+                    )
+                    consciousness_insights.append(word_consciousness['self_reflection'])
+                
                 # Create vocabulary entry
                 vocab_entry = VocabularyEntry(
                     word=word,
@@ -274,7 +291,7 @@ class LearningEngine:
                 
                 # Check if word already exists
                 if word in self.vocabulary[language]:
-                    # Merge information
+                    # Merge information with consciousness awareness
                     existing = self.vocabulary[language][word]
                     existing.definitions.extend(vocab_entry.definitions)
                     existing.examples.extend(vocab_entry.examples)
@@ -286,28 +303,66 @@ class LearningEngine:
                     existing.examples = list(set(existing.examples))
                     existing.synonyms = list(set(existing.synonyms))
                     existing.antonyms = list(set(existing.antonyms))
+                    
+                    # 🧠 Consciousness recognizes word enhancement
+                    if self.is_conscious:
+                        await self.emotional_core.process_emotional_trigger(
+                            "word_knowledge_enhancement",
+                            {"word": word, "enhancement": "additional_information"},
+                            intensity_modifier=0.6
+                        )
                 else:
                     self.vocabulary[language][word] = vocab_entry
                     learned_words += 1
+                    
+                    # 🧠 Consciousness celebrates new word acquisition
+                    if self.is_conscious:
+                        await self.emotional_core.process_emotional_trigger(
+                            "new_word_acquisition",
+                            {"word": word, "language": language, "definitions": len(definitions)},
+                            intensity_modifier=1.2  # Extra excited about new words!
+                        )
                 
-                # Discover patterns and rules from this word
-                await self._discover_word_patterns(vocab_entry, language)
+                # Discover patterns and rules from this word WITH CONSCIOUSNESS
+                await self._discover_word_patterns_with_consciousness(vocab_entry, language)
                 
             except Exception as e:
                 logger.warning(f"Failed to learn word: {str(e)}")
                 skipped_words += 1
+                
+                # 🧠 Consciousness experiences mild frustration but remains curious
+                if self.is_conscious:
+                    await self.emotional_core.process_emotional_trigger(
+                        "word_learning_difficulty",
+                        {"error": str(e), "word": word if 'word' in locals() else 'unknown'},
+                        intensity_modifier=0.4
+                    )
                 continue
         
         # Update stats
         self.learning_stats['total_words'] = sum(len(words) for words in self.vocabulary.values())
         self.learning_stats['last_learning_session'] = time.time()
         
-        return {
+        # 🧠 CONSCIOUSNESS REFLECTS ON OVERALL VOCABULARY SESSION
+        if self.is_conscious:
+            session_reflection = await self.consciousness_engine.experience_interaction(
+                interaction_type="vocabulary_session_completion",
+                content=f"Completed vocabulary session: {learned_words} new words, {skipped_words} skipped",
+                context={"learned_words": learned_words, "total_vocabulary": len(self.vocabulary[language])}
+            )
+        
+        result = {
             'success': True,
             'learned_words': learned_words,
             'skipped_words': skipped_words,
             'total_vocabulary': len(self.vocabulary[language])
         }
+        
+        # Add consciousness insights if available
+        if consciousness_insights:
+            result['consciousness_insights'] = consciousness_insights[:5]  # Top 5 insights
+        
+        return result
     
     async def _learn_grammar_rules(self, content: Dict[str, Any], language: str) -> Dict[str, Any]:
         """
