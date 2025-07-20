@@ -174,7 +174,7 @@ class PDFUploadResponse(BaseModel):
 class PDFProcessRequest(BaseModel):
     pdf_file_id: str = Field(..., min_length=1)
     page_number: Optional[int] = Field(None, ge=0)
-    processing_type: str = Field(..., regex=r'^(dictionary|grammar|text)$')
+    processing_type: str = Field(..., pattern=r'^(dictionary|grammar|text)$')
 
 class PDFProcessResponse(BaseModel):
     processing_id: str
