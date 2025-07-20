@@ -95,8 +95,8 @@ class EmotionalState:
     trigger: str      # What caused this emotion
     context: Dict[str, Any]
     duration_seconds: float = 0.0
-    timestamp: float = Field(default_factory=time.time)
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    timestamp: float = field(default_factory=time.time)
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
     
     def to_dict(self) -> Dict[str, Any]:
         return {
