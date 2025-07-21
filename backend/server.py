@@ -509,7 +509,7 @@ async def list_skill_sessions():
         
         # Also get completed sessions from database
         completed_sessions = []
-        if db:
+        if db is not None:
             completed_cursor = db.completed_skill_sessions.find().sort("completed_at", -1).limit(10)
             async for session in completed_cursor:
                 completed_sessions.append({
