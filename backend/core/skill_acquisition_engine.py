@@ -99,16 +99,16 @@ class SkillAcquisitionEngine:
         session_id = str(uuid.uuid4())
         
         # Determine model to use
-        model_config = custom_model or self.skill_model_mapping.get(skill_type, {}).get("primary")
+        model_configuration = custom_model or self.skill_model_mapping.get(skill_type, {}).get("primary")
         
-        if not model_config:
+        if not model_configuration:
             raise ValueError(f"No model configuration found for skill type: {skill_type}")
         
         # Create learning session
         session = {
             "session_id": session_id,
             "skill_type": skill_type.value,
-            "model_config": model_config,
+            "model_configuration": model_configuration,
             "target_accuracy": target_accuracy,
             "current_accuracy": 0.0,
             "learning_iterations": learning_iterations,
