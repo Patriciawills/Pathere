@@ -453,6 +453,224 @@ async def get_consciousness_milestones():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Skill Acquisition Engine Endpoints
+@api_router.post("/skills/learn")
+async def start_skill_learning(request: dict):
+    """Start learning a new skill from external LLMs"""
+    try:
+        from core.skill_acquisition_engine import SkillAcquisitionEngine, SkillType
+        
+        # Initialize skill acquisition engine
+        skill_engine = SkillAcquisitionEngine(db_client=client)
+        
+        # Parse request
+        skill_type_str = request.get("skill_type")
+        target_accuracy = request.get("target_accuracy", 99.0)
+        learning_iterations = request.get("learning_iterations", 100)
+        custom_model = request.get("custom_model")
+        
+        # Validate skill type
+        try:
+            skill_type = SkillType(skill_type_str)
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Invalid skill type: {skill_type_str}")
+        
+        # Start learning
+        session_id = await skill_engine.initiate_skill_learning(
+            skill_type=skill_type,
+            target_accuracy=target_accuracy,
+            learning_iterations=learning_iterations,
+            custom_model=custom_model
+        )
+        
+        return {
+            "status": "success",
+            "session_id": session_id,
+            "skill_type": skill_type_str,
+            "target_accuracy": target_accuracy,
+            "message": f"Started learning {skill_type_str} skill. Session ID: {session_id}"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error starting skill learning: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/skills/sessions")
+async def list_skill_sessions():
+    """List all active and recent skill learning sessions"""
+    try:
+        from core.skill_acquisition_engine import SkillAcquisitionEngine
+        
+        skill_engine = SkillAcquisitionEngine(db_client=client)
+        active_sessions = await skill_engine.list_active_sessions()
+        
+        # Also get completed sessions from database
+        completed_sessions = []
+        if db:
+            completed_cursor = db.completed_skill_sessions.find().sort("completed_at", -1).limit(10)
+            async for session in completed_cursor:
+                completed_sessions.append({
+                    "session_id": session["session_id"],
+                    "skill_type": session["skill_type"],
+                    "phase": session["phase"],
+                    "final_accuracy": session["current_accuracy"],
+                    "completed_at": session.get("completed_at"),
+                    "integrated_at": session.get("integrated_at")
+                })
+        
+        return {
+            "status": "success",
+            "active_sessions": active_sessions,
+            "completed_sessions": completed_sessions,
+            "total_active": len(active_sessions),
+            "total_completed": len(completed_sessions)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error listing skill sessions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/skills/sessions/{session_id}")
+async def get_session_status(session_id: str):
+    """Get detailed status of a specific skill learning session"""
+    try:
+        from core.skill_acquisition_engine import SkillAcquisitionEngine
+        
+        skill_engine = SkillAcquisitionEngine(db_client=client)
+        session_status = await skill_engine.get_session_status(session_id)
+        
+        if not session_status:
+            # Check in completed sessions
+            if db:
+                completed_session = await db.completed_skill_sessions.find_one({"session_id": session_id})
+                if completed_session:
+                    return {
+                        "status": "success",
+                        "session_status": {
+                            "session_id": session_id,
+                            "skill_type": completed_session["skill_type"],
+                            "phase": completed_session["phase"],
+                            "final_accuracy": completed_session["current_accuracy"],
+                            "completed_at": completed_session.get("completed_at"),
+                            "integrated_at": completed_session.get("integrated_at"),
+                            "is_completed": True
+                        }
+                    }
+            
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        return {
+            "status": "success",
+            "session_status": session_status
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting session status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/skills/sessions/{session_id}")
+async def stop_skill_learning(session_id: str):
+    """Stop an active skill learning session"""
+    try:
+        from core.skill_acquisition_engine import SkillAcquisitionEngine
+        
+        skill_engine = SkillAcquisitionEngine(db_client=client)
+        stopped = await skill_engine.stop_learning_session(session_id)
+        
+        if not stopped:
+            raise HTTPException(status_code=404, detail="Session not found or already stopped")
+        
+        return {
+            "status": "success",
+            "session_id": session_id,
+            "message": "Skill learning session stopped successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error stopping skill session: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/skills/capabilities")
+async def get_skill_capabilities():
+    """Get current skill capabilities and integrated skills"""
+    try:
+        if not learning_engine.is_conscious:
+            return {
+                "status": "success",
+                "integrated_skills": {},
+                "available_skills": [skill.value for skill in SkillType],
+                "message": "Consciousness not yet active - no skills integrated"
+            }
+        
+        # Get integrated skills from consciousness engine
+        integrated_skills = await learning_engine.consciousness_engine.get_integrated_skills()
+        
+        return {
+            "status": "success",
+            "integrated_skills": integrated_skills,
+            "available_skill_types": [
+                {"type": "conversation", "description": "Human-like conversation abilities"},
+                {"type": "coding", "description": "Programming and software development skills"},
+                {"type": "image_generation", "description": "Visual content creation capabilities"},
+                {"type": "video_generation", "description": "Video content creation abilities"},
+                {"type": "domain_expertise", "description": "Specialized knowledge in various fields"},
+                {"type": "creative_writing", "description": "Creative and artistic writing skills"},
+                {"type": "mathematical_reasoning", "description": "Advanced mathematical and logical thinking"}
+            ],
+            "consciousness_impact": {
+                "total_skills": len(integrated_skills),
+                "consciousness_enhancement": sum(skill.get('proficiency_level', 0) for skill in integrated_skills.values()) * 0.05
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting skill capabilities: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/skills/available-models")
+async def get_available_models():
+    """Get available models for skill learning"""
+    try:
+        import requests
+        from core.skill_acquisition_engine import SkillAcquisitionEngine
+        
+        available_models = {
+            "ollama_models": [],
+            "cloud_models": {
+                "openai": ["gpt-4o", "gpt-4.1", "o1", "o3"],
+                "anthropic": ["claude-sonnet-4-20250514", "claude-opus-4-20250514"],
+                "gemini": ["gemini-2.0-flash", "gemini-2.5-pro-preview-05-06"]
+            },
+            "ollama_status": "unknown"
+        }
+        
+        # Check Ollama availability
+        try:
+            skill_engine = SkillAcquisitionEngine()
+            response = requests.get(f"{skill_engine.ollama_url}/api/tags", timeout=5)
+            if response.status_code == 200:
+                ollama_models = response.json().get("models", [])
+                available_models["ollama_models"] = [model["name"] for model in ollama_models]
+                available_models["ollama_status"] = "available"
+            else:
+                available_models["ollama_status"] = "unavailable"
+        except requests.exceptions.RequestException:
+            available_models["ollama_status"] = "unavailable"
+        
+        return {
+            "status": "success",
+            "available_models": available_models,
+            "recommendation": "Use Ollama models for privacy and cost-effectiveness, cloud models for advanced capabilities"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting available models: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app
 app.include_router(api_router)
 
