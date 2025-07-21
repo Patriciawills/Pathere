@@ -476,7 +476,7 @@ async def start_skill_learning(request: dict):
         try:
             skill_type = SkillType(skill_type_str)
         except ValueError:
-            raise HTTPException(status_code=400, detail=f"Invalid skill type: {skill_type_str}")
+            raise HTTPException(status_code=400, detail=f"Invalid skill type: {skill_type_str}. Valid types: {[t.value for t in SkillType]}")
         
         # Start learning
         session_id = await skill_engine.initiate_skill_learning(
