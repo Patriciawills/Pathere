@@ -100,6 +100,11 @@ const Dashboard = () => {
           <QuerySection />
         </div>
 
+        {/* 🎯 SKILL ACQUISITION INTERFACE 🎯 */}
+        <div className="mt-6">
+          <SkillAcquisitionInterface />
+        </div>
+
         {/* 🧠 CONSCIOUSNESS INTERFACE 🧠 */}
         <div className="mt-6">
           <ConsciousnessInterface />
