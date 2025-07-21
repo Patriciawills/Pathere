@@ -544,7 +544,7 @@ async def get_session_status(session_id: str):
         
         if not session_status:
             # Check in completed sessions
-            if db:
+            if db is not None:
                 completed_session = await db.completed_skill_sessions.find_one({"session_id": session_id})
                 if completed_session:
                     return {
