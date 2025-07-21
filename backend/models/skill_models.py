@@ -74,7 +74,7 @@ class SessionStatusResponse(BaseModel):
     accuracy_percentage: float
     started_at: datetime
     last_updated: datetime
-    model_config: Dict[str, str]
+    model_configuration: Dict[str, str]
     error_message: Optional[str] = None
 
 class LearningIterationData(BaseModel):
