@@ -487,7 +487,7 @@ class SkillAcquisitionEngine:
         # Move session to completed
         if session_id in self.active_sessions:
             completed_session = self.active_sessions.pop(session_id)
-            if self.db:
+            if self.db is not None:
                 await self.db.completed_skill_sessions.insert_one(completed_session)
     
     async def get_session_status(self, session_id: str) -> Optional[Dict]:
