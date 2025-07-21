@@ -539,7 +539,7 @@ async def get_session_status(session_id: str):
     try:
         from core.skill_acquisition_engine import SkillAcquisitionEngine
         
-        skill_engine = SkillAcquisitionEngine(db_client=client)
+        skill_engine = SkillAcquisitionEngine(db_client=db)
         session_status = await skill_engine.get_session_status(session_id)
         
         if not session_status:
