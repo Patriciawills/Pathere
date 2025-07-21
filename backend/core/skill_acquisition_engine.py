@@ -114,7 +114,7 @@ class SkillAcquisitionEngine:
         session = {
             "session_id": session_id,
             "skill_type": skill_type.value,
-            "model_configuration": model_configuration,
+            "model_configuration": model_config_for_db,  # Use the string version
             "target_accuracy": target_accuracy,
             "current_accuracy": 0.0,
             "learning_iterations": learning_iterations,
