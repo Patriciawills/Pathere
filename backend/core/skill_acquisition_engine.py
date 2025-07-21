@@ -254,7 +254,7 @@ class SkillAcquisitionEngine:
             })
             
             # Update in database
-            if self.db:
+            if self.db is not None:
                 await self.db.skill_sessions.update_one(
                     {"session_id": session_id},
                     {"$set": {
