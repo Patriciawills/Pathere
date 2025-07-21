@@ -24,6 +24,9 @@ from models.consciousness_models import (
     PersonalityUpdateRequest
 )
 
+# Import skill acquisition models
+from models.skill_models import SkillType
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
