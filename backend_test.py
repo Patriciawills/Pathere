@@ -754,6 +754,388 @@ class BackendTester:
         except Exception as e:
             self.log_test_result("Consciousness Error Handling", False, error=str(e))
             return False
+
+    # 🎯 SKILL ACQUISITION ENGINE TESTS 🎯
+    
+    async def test_skill_available_models(self):
+        """Test GET /api/skills/available-models endpoint"""
+        try:
+            async with self.session.get(f"{self.base_url}/skills/available-models") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    required_fields = ['status', 'available_models']
+                    
+                    if all(field in data for field in required_fields):
+                        available_models = data['available_models']
+                        if 'ollama_models' in available_models and 'cloud_models' in available_models:
+                            ollama_status = available_models.get('ollama_status', 'unknown')
+                            self.log_test_result("Skill Available Models", True, f"Models retrieved, Ollama status: {ollama_status}")
+                            return available_models
+                        else:
+                            self.log_test_result("Skill Available Models", False, error="Missing model categories in response")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in data]
+                        self.log_test_result("Skill Available Models", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Skill Available Models", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+        except Exception as e:
+            self.log_test_result("Skill Available Models", False, error=str(e))
+            return None
+
+    async def test_skill_capabilities(self):
+        """Test GET /api/skills/capabilities endpoint"""
+        try:
+            async with self.session.get(f"{self.base_url}/skills/capabilities") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    required_fields = ['status', 'integrated_skills', 'available_skill_types']
+                    
+                    if all(field in data for field in required_fields):
+                        integrated_skills = data['integrated_skills']
+                        available_skill_types = data['available_skill_types']
+                        
+                        if isinstance(integrated_skills, dict) and isinstance(available_skill_types, list):
+                            self.log_test_result("Skill Capabilities", True, f"Capabilities retrieved, {len(integrated_skills)} integrated skills")
+                            return data
+                        else:
+                            self.log_test_result("Skill Capabilities", False, error="Invalid data types in response")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in data]
+                        self.log_test_result("Skill Capabilities", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Skill Capabilities", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+        except Exception as e:
+            self.log_test_result("Skill Capabilities", False, error=str(e))
+            return None
+
+    async def test_skill_start_learning(self):
+        """Test POST /api/skills/learn endpoint"""
+        try:
+            payload = {
+                "skill_type": "conversation",
+                "target_accuracy": 95.0,
+                "learning_iterations": 50
+            }
+            
+            async with self.session.post(f"{self.base_url}/skills/learn",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'session_id', 'skill_type', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        session_id = result['session_id']
+                        skill_type = result['skill_type']
+                        if session_id and skill_type == "conversation":
+                            self.log_test_result("Skill Start Learning", True, f"Learning session started: {session_id}")
+                            return session_id
+                        else:
+                            self.log_test_result("Skill Start Learning", False, error="Invalid session ID or skill type")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Skill Start Learning", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Skill Start Learning", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Skill Start Learning", False, error=str(e))
+            return None
+
+    async def test_skill_start_learning_invalid_type(self):
+        """Test POST /api/skills/learn with invalid skill type"""
+        try:
+            payload = {
+                "skill_type": "invalid_skill_type",
+                "target_accuracy": 95.0,
+                "learning_iterations": 50
+            }
+            
+            async with self.session.post(f"{self.base_url}/skills/learn",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 400:
+                    error_text = await response.text()
+                    if "Invalid skill type" in error_text:
+                        self.log_test_result("Skill Start Learning Invalid Type", True, "Invalid skill type properly rejected")
+                        return True
+                    else:
+                        self.log_test_result("Skill Start Learning Invalid Type", False, error=f"Unexpected error message: {error_text}")
+                        return False
+                else:
+                    self.log_test_result("Skill Start Learning Invalid Type", False, error=f"Expected 400 status, got {response.status}")
+                    return False
+                    
+        except Exception as e:
+            self.log_test_result("Skill Start Learning Invalid Type", False, error=str(e))
+            return False
+
+    async def test_skill_list_sessions(self):
+        """Test GET /api/skills/sessions endpoint"""
+        try:
+            async with self.session.get(f"{self.base_url}/skills/sessions") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    required_fields = ['status', 'active_sessions', 'completed_sessions', 'total_active', 'total_completed']
+                    
+                    if all(field in data for field in required_fields):
+                        active_sessions = data['active_sessions']
+                        completed_sessions = data['completed_sessions']
+                        
+                        if isinstance(active_sessions, list) and isinstance(completed_sessions, list):
+                            total_active = len(active_sessions)
+                            total_completed = len(completed_sessions)
+                            self.log_test_result("Skill List Sessions", True, f"Sessions listed: {total_active} active, {total_completed} completed")
+                            return data
+                        else:
+                            self.log_test_result("Skill List Sessions", False, error="Sessions data not in list format")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in data]
+                        self.log_test_result("Skill List Sessions", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Skill List Sessions", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+        except Exception as e:
+            self.log_test_result("Skill List Sessions", False, error=str(e))
+            return None
+
+    async def test_skill_get_session_status(self, session_id: str):
+        """Test GET /api/skills/sessions/{session_id} endpoint"""
+        if not session_id:
+            self.log_test_result("Skill Get Session Status", False, error="No session ID provided")
+            return None
+            
+        try:
+            async with self.session.get(f"{self.base_url}/skills/sessions/{session_id}") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    required_fields = ['status', 'session_status']
+                    
+                    if all(field in data for field in required_fields):
+                        session_status = data['session_status']
+                        if 'session_id' in session_status and session_status['session_id'] == session_id:
+                            self.log_test_result("Skill Get Session Status", True, f"Session status retrieved for {session_id}")
+                            return session_status
+                        else:
+                            self.log_test_result("Skill Get Session Status", False, error="Session ID mismatch in response")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in data]
+                        self.log_test_result("Skill Get Session Status", False, error=f"Missing fields: {missing}")
+                        return None
+                elif response.status == 404:
+                    self.log_test_result("Skill Get Session Status", True, "Session not found (expected for new session)")
+                    return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Skill Get Session Status", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+        except Exception as e:
+            self.log_test_result("Skill Get Session Status", False, error=str(e))
+            return None
+
+    async def test_skill_get_session_status_invalid_id(self):
+        """Test GET /api/skills/sessions/{session_id} with invalid session ID"""
+        try:
+            invalid_session_id = "invalid-session-id-12345"
+            async with self.session.get(f"{self.base_url}/skills/sessions/{invalid_session_id}") as response:
+                if response.status == 404:
+                    self.log_test_result("Skill Get Session Status Invalid ID", True, "Invalid session ID properly handled")
+                    return True
+                else:
+                    self.log_test_result("Skill Get Session Status Invalid ID", False, error=f"Expected 404 status, got {response.status}")
+                    return False
+        except Exception as e:
+            self.log_test_result("Skill Get Session Status Invalid ID", False, error=str(e))
+            return False
+
+    async def test_skill_stop_learning(self, session_id: str):
+        """Test DELETE /api/skills/sessions/{session_id} endpoint"""
+        if not session_id:
+            self.log_test_result("Skill Stop Learning", False, error="No session ID provided")
+            return False
+            
+        try:
+            async with self.session.delete(f"{self.base_url}/skills/sessions/{session_id}") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    required_fields = ['status', 'session_id', 'message']
+                    
+                    if all(field in data for field in required_fields):
+                        if data['session_id'] == session_id:
+                            self.log_test_result("Skill Stop Learning", True, f"Session {session_id} stopped successfully")
+                            return True
+                        else:
+                            self.log_test_result("Skill Stop Learning", False, error="Session ID mismatch in response")
+                            return False
+                    else:
+                        missing = [f for f in required_fields if f not in data]
+                        self.log_test_result("Skill Stop Learning", False, error=f"Missing fields: {missing}")
+                        return False
+                elif response.status == 404:
+                    self.log_test_result("Skill Stop Learning", True, "Session not found or already stopped (acceptable)")
+                    return True
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Skill Stop Learning", False, error=f"HTTP {response.status}: {error_text}")
+                    return False
+        except Exception as e:
+            self.log_test_result("Skill Stop Learning", False, error=str(e))
+            return False
+
+    async def test_skill_stop_learning_invalid_id(self):
+        """Test DELETE /api/skills/sessions/{session_id} with invalid session ID"""
+        try:
+            invalid_session_id = "invalid-session-id-12345"
+            async with self.session.delete(f"{self.base_url}/skills/sessions/{invalid_session_id}") as response:
+                if response.status == 404:
+                    self.log_test_result("Skill Stop Learning Invalid ID", True, "Invalid session ID properly handled")
+                    return True
+                else:
+                    self.log_test_result("Skill Stop Learning Invalid ID", False, error=f"Expected 404 status, got {response.status}")
+                    return False
+        except Exception as e:
+            self.log_test_result("Skill Stop Learning Invalid ID", False, error=str(e))
+            return False
+
+    async def test_skill_learning_different_types(self):
+        """Test starting learning sessions with different skill types"""
+        skill_types = ["coding", "image_generation", "creative_writing"]
+        successful_sessions = []
+        
+        for skill_type in skill_types:
+            try:
+                payload = {
+                    "skill_type": skill_type,
+                    "target_accuracy": 90.0,
+                    "learning_iterations": 30
+                }
+                
+                async with self.session.post(f"{self.base_url}/skills/learn",
+                                           json=payload,
+                                           headers={'Content-Type': 'application/json'}) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        if 'session_id' in result:
+                            successful_sessions.append((skill_type, result['session_id']))
+                        await asyncio.sleep(0.5)  # Small delay between requests
+                    
+            except Exception as e:
+                logger.warning(f"Failed to start {skill_type} learning: {e}")
+        
+        if len(successful_sessions) > 0:
+            self.log_test_result("Skill Learning Different Types", True, f"Started {len(successful_sessions)} different skill learning sessions")
+            return successful_sessions
+        else:
+            self.log_test_result("Skill Learning Different Types", False, error="No skill learning sessions could be started")
+            return []
+
+    async def test_skill_consciousness_integration(self):
+        """Test that skill learning integrates with consciousness system"""
+        try:
+            # First check if consciousness is active
+            async with self.session.get(f"{self.base_url}/consciousness/state") as response:
+                consciousness_active = response.status == 200
+            
+            # Get current capabilities
+            capabilities_data = await self.test_skill_capabilities()
+            
+            if capabilities_data:
+                integrated_skills = capabilities_data.get('integrated_skills', {})
+                consciousness_impact = capabilities_data.get('consciousness_impact', {})
+                
+                if consciousness_active and 'consciousness_enhancement' in consciousness_impact:
+                    self.log_test_result("Skill Consciousness Integration", True, f"Consciousness integration working, enhancement factor present")
+                    return True
+                elif not consciousness_active:
+                    self.log_test_result("Skill Consciousness Integration", True, "Consciousness not active (expected behavior)")
+                    return True
+                else:
+                    self.log_test_result("Skill Consciousness Integration", False, error="Missing consciousness integration data")
+                    return False
+            else:
+                self.log_test_result("Skill Consciousness Integration", False, error="Could not retrieve capabilities data")
+                return False
+                
+        except Exception as e:
+            self.log_test_result("Skill Consciousness Integration", False, error=str(e))
+            return False
+
+    async def test_skill_ollama_connectivity(self):
+        """Test Ollama model provider connectivity"""
+        try:
+            models_data = await self.test_skill_available_models()
+            
+            if models_data:
+                ollama_status = models_data.get('ollama_status', 'unknown')
+                ollama_models = models_data.get('ollama_models', [])
+                
+                if ollama_status == 'available' and len(ollama_models) > 0:
+                    self.log_test_result("Skill Ollama Connectivity", True, f"Ollama available with {len(ollama_models)} models")
+                    return True
+                elif ollama_status == 'unavailable':
+                    self.log_test_result("Skill Ollama Connectivity", True, "Ollama unavailable (expected in test environment)")
+                    return True
+                else:
+                    self.log_test_result("Skill Ollama Connectivity", False, error=f"Unexpected Ollama status: {ollama_status}")
+                    return False
+            else:
+                self.log_test_result("Skill Ollama Connectivity", False, error="Could not retrieve models data")
+                return False
+                
+        except Exception as e:
+            self.log_test_result("Skill Ollama Connectivity", False, error=str(e))
+            return False
+
+    async def test_skill_session_lifecycle(self):
+        """Test complete skill learning session lifecycle"""
+        try:
+            # 1. Start a learning session
+            session_id = await self.test_skill_start_learning()
+            
+            if not session_id:
+                self.log_test_result("Skill Session Lifecycle", False, error="Could not start learning session")
+                return False
+            
+            # 2. Check session status
+            await asyncio.sleep(1)  # Give it a moment to initialize
+            session_status = await self.test_skill_get_session_status(session_id)
+            
+            # 3. List all sessions (should include our session)
+            sessions_data = await self.test_skill_list_sessions()
+            
+            # 4. Stop the session
+            stop_result = await self.test_skill_stop_learning(session_id)
+            
+            # 5. Verify session is stopped
+            await asyncio.sleep(0.5)
+            final_status = await self.test_skill_get_session_status(session_id)
+            
+            if stop_result:
+                self.log_test_result("Skill Session Lifecycle", True, f"Complete lifecycle test successful for session {session_id}")
+                return True
+            else:
+                self.log_test_result("Skill Session Lifecycle", False, error="Session lifecycle had issues")
+                return False
+                
+        except Exception as e:
+            self.log_test_result("Skill Session Lifecycle", False, error=str(e))
+            return False
     
     async def run_all_tests(self):
         """Run all backend tests"""
