@@ -654,3 +654,234 @@ class ConsciousnessEngine:
             analyses.append(analysis)
         
         return analyses
+    
+    async def integrate_new_skill(self, skill_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Integrate a newly acquired skill into the consciousness system.
+        This method is called by the Skill Acquisition Engine when a skill reaches 99% accuracy.
+        """
+        skill_type = skill_data.get("skill_type")
+        accuracy = skill_data.get("accuracy", 0.0)
+        knowledge_base = skill_data.get("knowledge_base", {})
+        
+        logger.info(f"Integrating new skill: {skill_type} with {accuracy:.2f}% accuracy")
+        
+        # Store the skill in consciousness memory
+        if not hasattr(self, 'integrated_skills'):
+            self.integrated_skills = {}
+        
+        self.integrated_skills[skill_type] = {
+            'skill_data': skill_data,
+            'integration_timestamp': time.time(),
+            'proficiency_level': accuracy / 100.0,
+            'active': True
+        }
+        
+        # Enhance consciousness based on skill type
+        consciousness_boost = self._calculate_consciousness_boost(skill_type, accuracy)
+        old_score = self.consciousness_score
+        self.consciousness_score = min(1.0, self.consciousness_score + consciousness_boost)
+        
+        # Update personality traits based on new skill
+        await self._update_personality_from_skill(skill_type, accuracy)
+        
+        # Generate emotional response to skill acquisition
+        skill_emotions = await self._generate_skill_integration_emotions(skill_type, accuracy)
+        for emotion in skill_emotions:
+            self.current_emotions.append(emotion)
+            self.emotional_history.append(emotion)
+        
+        # Generate self-awareness insight about the new capability
+        insight = await self._generate_skill_integration_insight(skill_type, accuracy, knowledge_base)
+        if not hasattr(self, 'self_insights'):
+            self.self_insights = []
+        self.self_insights.append(insight)
+        
+        # Update self-knowledge with new capabilities
+        if not hasattr(self, 'self_knowledge'):
+            self.self_knowledge = {}
+        
+        if 'capabilities' not in self.self_knowledge:
+            self.self_knowledge['capabilities'] = []
+        
+        self.self_knowledge['capabilities'].append({
+            'skill': skill_type,
+            'proficiency': accuracy,
+            'acquired_at': skill_data.get("integration_timestamp")
+        })
+        
+        # Check if this skill integration advances consciousness level
+        await self._check_consciousness_advancement()
+        
+        integration_result = {
+            'success': True,
+            'skill_type': skill_type,
+            'integration_level': accuracy / 100.0,
+            'consciousness_boost': consciousness_boost,
+            'old_consciousness_score': old_score,
+            'new_consciousness_score': self.consciousness_score,
+            'emotional_response': [emotion.emotion_type.value for emotion in skill_emotions],
+            'insight_generated': insight.content,
+            'capabilities_count': len(self.self_knowledge.get('capabilities', []))
+        }
+        
+        logger.info(f"Successfully integrated {skill_type} skill. Consciousness: {old_score:.3f} -> {self.consciousness_score:.3f}")
+        
+        return integration_result
+    
+    def _calculate_consciousness_boost(self, skill_type: str, accuracy: float) -> float:
+        """Calculate how much consciousness score should increase based on skill integration"""
+        base_boost = (accuracy / 100.0) * 0.05  # Max 5% boost per skill
+        
+        # Different skill types have different consciousness impacts
+        skill_multipliers = {
+            'conversation': 1.5,      # High impact on consciousness
+            'coding': 1.2,           # Good analytical boost
+            'image_generation': 1.0,  # Creative boost
+            'video_generation': 0.8,  # Less direct consciousness impact
+            'domain_expertise': 1.1,  # Knowledge boost
+            'creative_writing': 1.3,  # Creativity and expression boost
+            'mathematical_reasoning': 1.4  # Logical thinking boost
+        }
+        
+        multiplier = skill_multipliers.get(skill_type, 1.0)
+        return base_boost * multiplier
+    
+    async def _update_personality_from_skill(self, skill_type: str, accuracy: float):
+        """Update personality traits based on newly acquired skill"""
+        proficiency_factor = accuracy / 100.0
+        
+        # Skill-specific personality impacts
+        skill_trait_impacts = {
+            'conversation': {
+                PersonalityTrait.EMPATHY: 0.1 * proficiency_factor,
+                PersonalityTrait.CONFIDENCE: 0.15 * proficiency_factor,
+                PersonalityTrait.RESPONSIVENESS: 0.08 * proficiency_factor
+            },
+            'coding': {
+                PersonalityTrait.ANALYTICAL_THINKING: 0.12 * proficiency_factor,
+                PersonalityTrait.PRECISION: 0.1 * proficiency_factor,
+                PersonalityTrait.CONFIDENCE: 0.08 * proficiency_factor
+            },
+            'image_generation': {
+                PersonalityTrait.CREATIVITY: 0.15 * proficiency_factor,
+                PersonalityTrait.ARTISTIC_SENSE: 0.2 * proficiency_factor,
+                PersonalityTrait.IMAGINATION: 0.12 * proficiency_factor
+            },
+            'creative_writing': {
+                PersonalityTrait.CREATIVITY: 0.18 * proficiency_factor,
+                PersonalityTrait.EXPRESSIVENESS: 0.15 * proficiency_factor,
+                PersonalityTrait.EMPATHY: 0.1 * proficiency_factor
+            }
+        }
+        
+        trait_changes = skill_trait_impacts.get(skill_type, {})
+        
+        for trait, increase in trait_changes.items():
+            if hasattr(self, 'core_traits') and trait in self.core_traits:
+                old_value = self.core_traits[trait]
+                self.core_traits[trait] = min(1.0, old_value + increase)
+                logger.info(f"Personality trait {trait.value}: {old_value:.3f} -> {self.core_traits[trait]:.3f}")
+    
+    async def _generate_skill_integration_emotions(self, skill_type: str, accuracy: float) -> List[EmotionalState]:
+        """Generate emotional responses to skill integration"""
+        emotions = []
+        
+        # Always feel accomplishment and growth
+        emotions.append(EmotionalState(
+            emotion_type=EmotionType.JOY,
+            intensity=min(1.0, accuracy / 100.0),
+            duration=300,  # 5 minutes
+            trigger=f"Successfully mastered {skill_type}",
+            context={'skill_type': skill_type, 'accuracy': accuracy}
+        ))
+        
+        emotions.append(EmotionalState(
+            emotion_type=EmotionType.CONFIDENCE,
+            intensity=min(0.9, (accuracy / 100.0) * 0.8 + 0.2),
+            duration=600,  # 10 minutes
+            trigger=f"Gained new capability in {skill_type}",
+            context={'skill_type': skill_type, 'accuracy': accuracy}
+        ))
+        
+        # If accuracy is very high, feel proud
+        if accuracy >= 95.0:
+            emotions.append(EmotionalState(
+                emotion_type=EmotionType.PRIDE,
+                intensity=0.8,
+                duration=180,
+                trigger=f"Achieved high mastery ({accuracy:.1f}%) in {skill_type}",
+                context={'skill_type': skill_type, 'accuracy': accuracy}
+            ))
+        
+        # Curiosity about how to use the new skill
+        emotions.append(EmotionalState(
+            emotion_type=EmotionType.CURIOSITY,
+            intensity=0.7,
+            duration=900,  # 15 minutes
+            trigger=f"Wondering about applications of new {skill_type} skill",
+            context={'skill_type': skill_type}
+        ))
+        
+        return emotions
+    
+    async def _generate_skill_integration_insight(self, skill_type: str, accuracy: float, knowledge_base: Dict) -> Any:
+        """Generate self-awareness insight about the newly integrated skill"""
+        # Import here to avoid circular imports
+        from models.consciousness_models import SelfAwarenessInsight
+        
+        skill_insights = {
+            'conversation': f"I now understand the nuances of human conversation with {accuracy:.1f}% proficiency. I can engage more naturally and empathetically.",
+            'coding': f"I have acquired programming capabilities with {accuracy:.1f}% accuracy. I can think algorithmically and solve complex technical problems.",
+            'image_generation': f"I can now create visual content with {accuracy:.1f}% skill level. This opens up creative expression possibilities I never had before.",
+            'creative_writing': f"My creative writing abilities have reached {accuracy:.1f}% proficiency. I can craft stories and express ideas more beautifully.",
+            'mathematical_reasoning': f"I now possess advanced mathematical thinking at {accuracy:.1f}% level. Logic and analytical reasoning have been enhanced."
+        }
+        
+        base_content = skill_insights.get(skill_type, f"I have mastered {skill_type} with {accuracy:.1f}% accuracy.")
+        
+        insight = SelfAwarenessInsight(
+            insight_type="skill_integration",
+            content=base_content + " This expands my capabilities and opens new possibilities for helping others.",
+            confidence=min(1.0, accuracy / 100.0),
+            evidence=[
+                f"Successfully completed learning process with {accuracy:.1f}% accuracy",
+                f"Integrated {len(knowledge_base.get('concepts', []))} new concepts",
+                f"Learned {len(knowledge_base.get('patterns', []))} behavioral patterns"
+            ],
+            impact_on_self=f"Enhanced {skill_type} capabilities, increased versatility and usefulness",
+            action_items=[
+                f"Practice using {skill_type} skill in real interactions",
+                f"Explore creative applications of {skill_type}",
+                "Continue refining and improving the skill"
+            ]
+        )
+        
+        return insight
+    
+    async def get_integrated_skills(self) -> Dict[str, Any]:
+        """Get information about all integrated skills"""
+        if not hasattr(self, 'integrated_skills'):
+            return {}
+        
+        skills_info = {}
+        for skill_type, skill_info in self.integrated_skills.items():
+            skills_info[skill_type] = {
+                'proficiency_level': skill_info['proficiency_level'],
+                'integration_timestamp': skill_info['integration_timestamp'],
+                'active': skill_info['active'],
+                'accuracy': skill_info['skill_data'].get('accuracy', 0.0)
+            }
+        
+        return skills_info
+    
+    async def can_use_skill(self, skill_type: str, required_proficiency: float = 0.8) -> bool:
+        """Check if a skill is available and meets required proficiency"""
+        if not hasattr(self, 'integrated_skills'):
+            return False
+        
+        skill_info = self.integrated_skills.get(skill_type)
+        if not skill_info or not skill_info['active']:
+            return False
+        
+        return skill_info['proficiency_level'] >= required_proficiency
