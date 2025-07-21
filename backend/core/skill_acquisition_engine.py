@@ -168,7 +168,8 @@ class SkillAcquisitionEngine:
         session["phase"] = LearningPhase.CONNECTING.value
         
         model_configuration = session["model_configuration"]
-        provider = ModelProvider(model_configuration["provider"])
+        provider_str = model_configuration["provider"]
+        provider = ModelProvider(provider_str)  # Convert string back to enum
         
         try:
             if provider == ModelProvider.OLLAMA:
