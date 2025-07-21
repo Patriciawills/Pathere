@@ -112,7 +112,7 @@ class CompiledSkillData(BaseModel):
 class SkillSessionDocument(BaseModel):
     session_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     skill_type: SkillType
-    model_config: Dict[str, str]
+    model_configuration: Dict[str, str]
     target_accuracy: float
     current_accuracy: float = 0.0
     learning_iterations: int
