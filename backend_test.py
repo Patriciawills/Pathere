@@ -1190,6 +1190,34 @@ class BackendTester:
             # Error handling tests
             await self.test_consciousness_error_handling()
             
+            # 🎯 SKILL ACQUISITION ENGINE TESTS 🎯
+            logger.info("🎯 Testing Skill Acquisition Engine functionality...")
+            
+            # Core skill endpoints
+            await self.test_skill_available_models()
+            await self.test_skill_capabilities()
+            
+            # Skill learning tests
+            session_id = await self.test_skill_start_learning()
+            await self.test_skill_start_learning_invalid_type()
+            
+            # Session management tests
+            await self.test_skill_list_sessions()
+            if session_id:
+                await self.test_skill_get_session_status(session_id)
+                await self.test_skill_stop_learning(session_id)
+            
+            await self.test_skill_get_session_status_invalid_id()
+            await self.test_skill_stop_learning_invalid_id()
+            
+            # Advanced skill tests
+            await self.test_skill_learning_different_types()
+            await self.test_skill_consciousness_integration()
+            await self.test_skill_ollama_connectivity()
+            
+            # Complete lifecycle test
+            await self.test_skill_session_lifecycle()
+            
         finally:
             await self.teardown()
         
