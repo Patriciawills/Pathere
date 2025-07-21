@@ -127,7 +127,7 @@ class SkillAcquisitionEngine:
         
         # Store in active sessions and database
         self.active_sessions[session_id] = session
-        if self.db:
+        if self.db is not None:
             await self.db.skill_sessions.insert_one(session.copy())
         
         logger.info(f"Initiated skill learning session {session_id} for {skill_type.value}")
