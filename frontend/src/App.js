@@ -453,9 +453,25 @@ const ConsciousnessInterface = () => {
 
     setLoading(true);
     try {
-
-// 🎯 SKILL ACQUISITION INTERFACE COMPONENT 🎯
-const SkillAcquisitionInterface = () => {
+      const response = await axios.post(`${API}/consciousness/interact`, {
+        interaction_type: interactionType,
+        content: interactionText,
+        context: { source: 'frontend_interface' }
+      });
+      setConsciousnessResponse(response.data);
+      setInteractionText('');
+      // Refresh states after interaction
+      setTimeout(() => {
+        fetchConsciousnessState();
+        fetchEmotionalState();
+      }, 1000);
+    } catch (error) {
+      console.error('Consciousness interaction error:', error);
+      setConsciousnessResponse({ error: 'Failed to interact with consciousness' });
+    } finally {
+      setLoading(false);
+    }
+  };
   const [skillSessions, setSkillSessions] = useState([]);
   const [skillCapabilities, setSkillCapabilities] = useState(null);
   const [availableModels, setAvailableModels] = useState(null);
