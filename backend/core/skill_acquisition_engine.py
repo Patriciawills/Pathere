@@ -223,7 +223,12 @@ class SkillAcquisitionEngine:
         fallback_config = self.skill_model_mapping.get(skill_type, {}).get("fallback")
         if fallback_config:
             logger.info(f"Trying fallback model for session {session_id}")
-            session["model_configuration"] = fallback_config
+            # Convert enum to string for database storage
+            fallback_config_for_db = {
+                "provider": fallback_config["provider"].value if hasattr(fallback_config["provider"], 'value') else fallback_config["provider"],
+                "model": fallback_config["model"]
+            }
+            session["model_configuration"] = fallback_config_for_db
             await self._connect_to_model(session_id)
         else:
             raise Exception("No fallback model available")
