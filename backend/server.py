@@ -579,7 +579,7 @@ async def stop_skill_learning(session_id: str):
     try:
         from core.skill_acquisition_engine import SkillAcquisitionEngine
         
-        skill_engine = SkillAcquisitionEngine(db_client=client)
+        skill_engine = SkillAcquisitionEngine(db_client=db)
         stopped = await skill_engine.stop_learning_session(session_id)
         
         if not stopped:
