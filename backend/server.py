@@ -504,7 +504,7 @@ async def list_skill_sessions():
     try:
         from core.skill_acquisition_engine import SkillAcquisitionEngine
         
-        skill_engine = SkillAcquisitionEngine(db_client=client)
+        skill_engine = SkillAcquisitionEngine(db_client=db)
         active_sessions = await skill_engine.list_active_sessions()
         
         # Also get completed sessions from database
