@@ -161,16 +161,16 @@ class SkillAcquisitionEngine:
         session = self.active_sessions[session_id]
         session["phase"] = LearningPhase.CONNECTING.value
         
-        model_config = session["model_config"]
-        provider = ModelProvider(model_config["provider"])
+        model_configuration = session["model_configuration"]
+        provider = ModelProvider(model_configuration["provider"])
         
         try:
             if provider == ModelProvider.OLLAMA:
                 # Test Ollama connection
-                connection = await self._create_ollama_connection(model_config["model"])
+                connection = await self._create_ollama_connection(model_configuration["model"])
             else:
                 # Create cloud API connection (will need API keys)
-                connection = await self._create_cloud_connection(provider, model_config["model"])
+                connection = await self._create_cloud_connection(provider, model_configuration["model"])
             
             self.model_connections[session_id] = connection
             session["phase"] = LearningPhase.LEARNING.value
