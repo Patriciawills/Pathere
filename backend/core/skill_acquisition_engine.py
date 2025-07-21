@@ -104,6 +104,12 @@ class SkillAcquisitionEngine:
         if not model_configuration:
             raise ValueError(f"No model configuration found for skill type: {skill_type}")
         
+        # Convert enum values to strings for database storage
+        model_config_for_db = {
+            "provider": model_configuration["provider"].value if hasattr(model_configuration["provider"], 'value') else model_configuration["provider"],
+            "model": model_configuration["model"]
+        }
+        
         # Create learning session
         session = {
             "session_id": session_id,
