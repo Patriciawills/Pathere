@@ -274,10 +274,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Learning Engine - Human-like Learning"
-    - "PDF Upload Interface"
-    - "Query Engine Interface"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
