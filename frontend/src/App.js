@@ -448,6 +448,371 @@ const ConsciousnessInterface = () => {
 
     setLoading(true);
     try {
+
+// 🎯 SKILL ACQUISITION INTERFACE COMPONENT 🎯
+const SkillAcquisitionInterface = () => {
+  const [skillSessions, setSkillSessions] = useState([]);
+  const [skillCapabilities, setSkillCapabilities] = useState(null);
+  const [availableModels, setAvailableModels] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState(true);
+  
+  // Form state for starting new skill learning
+  const [newSkillForm, setNewSkillForm] = useState({
+    skill_type: 'conversation',
+    target_accuracy: 99.0,
+    learning_iterations: 100,
+    custom_model: null
+  });
+  const [showNewSkillForm, setShowNewSkillForm] = useState(false);
+
+  useEffect(() => {
+    fetchSkillData();
+    // Refresh every 5 seconds to show learning progress
+    const interval = setInterval(fetchSkillData, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchSkillData = async () => {
+    try {
+      const [sessionsResponse, capabilitiesResponse, modelsResponse] = await Promise.all([
+        axios.get(`${API}/skills/sessions`),
+        axios.get(`${API}/skills/capabilities`),
+        axios.get(`${API}/skills/available-models`)
+      ]);
+      
+      setSkillSessions(sessionsResponse.data);
+      setSkillCapabilities(capabilitiesResponse.data);
+      setAvailableModels(modelsResponse.data);
+    } catch (error) {
+      console.error("Error fetching skill data:", error);
+    } finally {
+      setLoadingState(false);
+    }
+  };
+
+  const startSkillLearning = async () => {
+    if (!newSkillForm.skill_type) return;
+
+    setLoading(true);
+    try {
+      const response = await axios.post(`${API}/skills/learn`, newSkillForm);
+      
+      if (response.data.status === 'success') {
+        alert(`Started learning ${newSkillForm.skill_type}! Session ID: ${response.data.session_id}`);
+        setShowNewSkillForm(false);
+        fetchSkillData(); // Refresh data
+      }
+    } catch (error) {
+      console.error("Error starting skill learning:", error);
+      alert("Error starting skill learning: " + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const stopSkillLearning = async (sessionId) => {
+    try {
+      await axios.delete(`${API}/skills/sessions/${sessionId}`);
+      alert("Skill learning session stopped");
+      fetchSkillData();
+    } catch (error) {
+      console.error("Error stopping skill learning:", error);
+      alert("Error stopping skill learning");
+    }
+  };
+
+  const getSkillEmoji = (skillType) => {
+    const emojis = {
+      conversation: '💬',
+      coding: '💻',
+      image_generation: '🎨',
+      video_generation: '🎬',
+      domain_expertise: '📚',
+      creative_writing: '✍️',
+      mathematical_reasoning: '🔢'
+    };
+    return emojis[skillType] || '🧠';
+  };
+
+  const getPhaseColor = (phase) => {
+    const colors = {
+      initiated: 'bg-blue-100 text-blue-800',
+      connecting: 'bg-yellow-100 text-yellow-800',
+      learning: 'bg-purple-100 text-purple-800',
+      assessing: 'bg-orange-100 text-orange-800',
+      integrating: 'bg-green-100 text-green-800',
+      mastered: 'bg-emerald-100 text-emerald-800',
+      disconnected: 'bg-gray-100 text-gray-800',
+      error: 'bg-red-100 text-red-800'
+    };
+    return colors[phase] || 'bg-gray-100 text-gray-800';
+  };
+
+  if (loadingState) {
+    return (
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="animate-pulse">
+          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+            <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg p-6 border border-gray-200">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-xl font-bold text-gray-800 flex items-center">
+          🎯 Skill Acquisition Engine
+        </h3>
+        <button
+          onClick={() => setShowNewSkillForm(!showNewSkillForm)}
+          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+        >
+          {showNewSkillForm ? 'Cancel' : 'Learn New Skill'}
+        </button>
+      </div>
+
+      {/* New Skill Form */}
+      {showNewSkillForm && (
+        <div className="mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+          <h4 className="font-semibold text-indigo-800 mb-4">Start Learning New Skill</h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Skill Type</label>
+              <select
+                value={newSkillForm.skill_type}
+                onChange={(e) => setNewSkillForm({...newSkillForm, skill_type: e.target.value})}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="conversation">💬 Conversation Skills</option>
+                <option value="coding">💻 Coding Skills</option>
+                <option value="image_generation">🎨 Image Generation</option>
+                <option value="video_generation">🎬 Video Generation</option>
+                <option value="domain_expertise">📚 Domain Expertise</option>
+                <option value="creative_writing">✍️ Creative Writing</option>
+                <option value="mathematical_reasoning">🔢 Mathematical Reasoning</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Target Accuracy (%)</label>
+              <input
+                type="number"
+                min="80"
+                max="100"
+                value={newSkillForm.target_accuracy}
+                onChange={(e) => setNewSkillForm({...newSkillForm, target_accuracy: parseFloat(e.target.value)})}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Learning Iterations</label>
+              <input
+                type="number"
+                min="10"
+                max="1000"
+                value={newSkillForm.learning_iterations}
+                onChange={(e) => setNewSkillForm({...newSkillForm, learning_iterations: parseInt(e.target.value)})}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+          
+          <button
+            onClick={startSkillLearning}
+            disabled={loading}
+            className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
+          >
+            {loading ? 'Starting...' : 'Start Learning'}
+          </button>
+        </div>
+      )}
+
+      {/* Current Capabilities */}
+      {skillCapabilities && (
+        <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+          <h4 className="font-semibold text-green-800 mb-3">🧠 Current Capabilities</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {Object.entries(skillCapabilities.integrated_skills).map(([skillType, skillData]) => (
+              <div key={skillType} className="bg-white p-3 rounded border">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium flex items-center">
+                    {getSkillEmoji(skillType)} {skillType.replace('_', ' ')}
+                  </span>
+                  <span className="text-sm font-mono bg-green-100 text-green-800 px-2 py-1 rounded">
+                    {(skillData.proficiency_level * 100).toFixed(1)}%
+                  </span>
+                </div>
+              </div>
+            ))}
+            {Object.keys(skillCapabilities.integrated_skills).length === 0 && (
+              <p className="text-gray-500 col-span-full text-center py-4">No skills integrated yet</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Active Learning Sessions */}
+      {skillSessions && skillSessions.active_sessions && skillSessions.active_sessions.length > 0 && (
+        <div className="mb-6">
+          <h4 className="font-semibold text-gray-800 mb-3">🔄 Active Learning Sessions</h4>
+          <div className="space-y-3">
+            {skillSessions.active_sessions.map((session) => (
+              <div key={session.session_id} className="p-4 border rounded-lg bg-purple-50">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center mb-2">
+                      <span className="text-lg mr-2">{getSkillEmoji(session.skill_type)}</span>
+                      <span className="font-medium capitalize">{session.skill_type.replace('_', ' ')}</span>
+                      <span className={`ml-3 px-2 py-1 rounded text-xs font-medium ${getPhaseColor(session.phase)}`}>
+                        {session.phase}
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-600">Progress:</span>
+                        <div className="font-mono">{session.progress_percentage.toFixed(1)}%</div>
+                        <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                          <div 
+                            className="bg-purple-600 h-2 rounded-full transition-all" 
+                            style={{width: `${session.progress_percentage}%`}}
+                          ></div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <span className="text-gray-600">Accuracy:</span>
+                        <div className="font-mono">{session.current_accuracy.toFixed(1)}%</div>
+                        <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                          <div 
+                            className="bg-green-600 h-2 rounded-full transition-all" 
+                            style={{width: `${session.accuracy_percentage}%`}}
+                          ></div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <span className="text-gray-600">Iteration:</span>
+                        <div className="font-mono">{session.current_iteration}/{session.learning_iterations}</div>
+                      </div>
+                      
+                      <div>
+                        <span className="text-gray-600">Target:</span>
+                        <div className="font-mono">{session.target_accuracy}%</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={() => stopSkillLearning(session.session_id)}
+                    className="ml-4 px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
+                  >
+                    Stop
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Completed Sessions */}
+      {skillSessions && skillSessions.completed_sessions && skillSessions.completed_sessions.length > 0 && (
+        <div className="mb-6">
+          <h4 className="font-semibold text-gray-800 mb-3">✅ Recently Completed</h4>
+          <div className="space-y-2">
+            {skillSessions.completed_sessions.slice(0, 5).map((session) => (
+              <div key={session.session_id} className="p-3 border rounded bg-gray-50 flex justify-between items-center">
+                <div className="flex items-center">
+                  <span className="text-lg mr-2">{getSkillEmoji(session.skill_type)}</span>
+                  <span className="font-medium capitalize">{session.skill_type.replace('_', ' ')}</span>
+                  <span className={`ml-3 px-2 py-1 rounded text-xs font-medium ${getPhaseColor(session.phase)}`}>
+                    {session.phase}
+                  </span>
+                </div>
+                <div className="text-sm font-mono">
+                  {session.final_accuracy?.toFixed(1)}%
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Model Availability */}
+      {availableModels && (
+        <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <h4 className="font-semibold text-blue-800 mb-3">🔧 Model Availability</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h5 className="font-medium text-blue-700 mb-2">Local Models (Ollama)</h5>
+              <div className="text-sm">
+                <div className={`mb-2 px-2 py-1 rounded ${
+                  availableModels.available_models.ollama_status === 'available' 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-red-100 text-red-800'
+                }`}>
+                  Status: {availableModels.available_models.ollama_status}
+                </div>
+                {availableModels.available_models.ollama_models.length > 0 ? (
+                  <ul className="space-y-1">
+                    {availableModels.available_models.ollama_models.map((model, index) => (
+                      <li key={index} className="bg-white px-2 py-1 rounded text-xs font-mono">
+                        {model}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500">No local models available</p>
+                )}
+              </div>
+            </div>
+            
+            <div>
+              <h5 className="font-medium text-blue-700 mb-2">Cloud Models</h5>
+              <div className="text-sm space-y-2">
+                {Object.entries(availableModels.available_models.cloud_models).map(([provider, models]) => (
+                  <div key={provider}>
+                    <div className="font-medium capitalize">{provider}:</div>
+                    <div className="ml-2 space-y-1">
+                      {models.slice(0, 3).map((model, index) => (
+                        <div key={index} className="bg-white px-2 py-1 rounded text-xs font-mono">
+                          {model}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          {availableModels.recommendation && (
+            <div className="mt-3 text-sm text-blue-700 bg-blue-100 p-2 rounded">
+              💡 {availableModels.recommendation}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Status Summary */}
+      <div className="mt-4 text-center text-sm text-gray-500">
+        Active: {skillSessions?.total_active || 0} | 
+        Completed: {skillSessions?.total_completed || 0} | 
+        Skills: {Object.keys(skillCapabilities?.integrated_skills || {}).length}
+      </div>
+    </div>
+  );
+};
       const response = await axios.post(`${API}/consciousness/interact`, {
         interaction_type: interactionType,
         content: interactionText,
