@@ -57,7 +57,7 @@ class SkillAcquisitionEngine:
     def __init__(self, db_client=None, ollama_url="http://localhost:11434"):
         self.db = db_client
         self.ollama_url = ollama_url
-        self.consciousness_engine = ConsciousnessEngine(db_client)
+        self.consciousness_engine = ConsciousnessEngine()  # Remove db_client parameter
         self.learning_engine = LearningEngine()
         
         # Active learning sessions
