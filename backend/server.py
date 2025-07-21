@@ -464,7 +464,7 @@ async def start_skill_learning(request: dict):
         from core.skill_acquisition_engine import SkillAcquisitionEngine, SkillType
         
         # Initialize skill acquisition engine
-        skill_engine = SkillAcquisitionEngine(db_client=client)
+        skill_engine = SkillAcquisitionEngine(db_client=db)
         
         # Parse request
         skill_type_str = request.get("skill_type")
