@@ -222,7 +222,7 @@ class LearningEngine:
             
             # 🤔 START METACOGNITIVE MONITORING
             metacognitive_process_id = None
-            if self.metacognitive_engine:
+            if self.metacognitive_engine is not None:
                 metacognitive_process_id = await self.metacognitive_engine.begin_thought_process(
                     thought_type=ThoughtType.PROBLEM_SOLVING,
                     trigger=f"learning_request_{data_type}"
