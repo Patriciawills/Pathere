@@ -1381,6 +1381,36 @@ class LearningEngine:
         """Load existing knowledge from persistent storage"""
         # This would load from files or database
         pass
+    
+    async def _extract_new_vocabulary(self, text: str, language: str) -> List[Dict[str, Any]]:
+        """Extract new vocabulary words from text"""
+        try:
+            words = text.lower().split()
+            new_words = []
+            
+            for word in words:
+                # Clean word (remove punctuation)
+                clean_word = ''.join(c for c in word if c.isalpha())
+                if len(clean_word) > 2 and clean_word not in self.vocabulary.get(language, {}):
+                    new_words.append({
+                        'word': clean_word,
+                        'definitions': [f'Context-based definition needed for: {clean_word}'],
+                        'pos': 'unknown'
+                    })
+            
+            # Remove duplicates
+            seen = set()
+            unique_words = []
+            for word_info in new_words:
+                if word_info['word'] not in seen:
+                    seen.add(word_info['word'])
+                    unique_words.append(word_info)
+            
+            return unique_words[:20]  # Limit to 20 new words per text
+            
+        except Exception as e:
+            logger.error(f"Error extracting vocabulary: {e}")
+            return []
 
 
 # Supporting classes
