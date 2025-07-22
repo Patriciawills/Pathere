@@ -37,7 +37,7 @@ db = client[os.environ['DB_NAME']]
 
 # Initialize core components
 ocr_engine = OCREngine()
-learning_engine = LearningEngine()
+learning_engine = LearningEngine(db_client=db)  # Pass database client for advanced consciousness features
 knowledge_graph = KnowledgeGraph()
 dataset_manager = DatasetManager()
 
