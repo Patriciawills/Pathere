@@ -537,7 +537,7 @@ class LearningEngine:
                             learning_insights.append(f"Multiple examples provided for '{rule.description}' - good for pattern recognition")
                         
                         # Add metacognitive reasoning
-                        if self.metacognitive_engine and len(rules_learned) % 5 == 0:
+                        if self.metacognitive_engine is not None and len(rules_learned) % 5 == 0:
                             await self.metacognitive_engine.add_reasoning_step(
                                 f"Processed {len(rules_learned)} grammar rules. Noticing complexity patterns in {language} grammar."
                             )
