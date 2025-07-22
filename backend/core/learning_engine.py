@@ -369,7 +369,7 @@ class LearningEngine:
                 )
                 
                 # Form memory of the learning failure for future improvement
-                if self.autobiographical_memory:
+                if self.autobiographical_memory is not None:
                     error_emotional_state = await self.emotional_core.get_emotional_state()
                     
                     await self.autobiographical_memory.form_episodic_memory(
