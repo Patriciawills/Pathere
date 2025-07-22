@@ -605,7 +605,7 @@ class LearningEngine:
                     learning_insights.append(f"New vocabulary discovered: {word_info['word']}")
             
             # Add metacognitive reflection
-            if self.metacognitive_engine:
+            if self.metacognitive_engine is not None:
                 await self.metacognitive_engine.add_reasoning_step(
                     f"Text analysis complete. Found {len(patterns_found)} patterns and {len(new_words)} new words."
                 )
