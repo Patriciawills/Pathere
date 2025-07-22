@@ -572,7 +572,7 @@ class LearningEngine:
                 return {'success': False, 'error': 'No text content provided'}
             
             # Start metacognitive analysis
-            if self.metacognitive_engine:
+            if self.metacognitive_engine is not None:
                 await self.metacognitive_engine.add_reasoning_step(
                     f"Analyzing text of {len(text.split())} words for learning opportunities"
                 )
