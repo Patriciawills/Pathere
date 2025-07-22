@@ -252,7 +252,7 @@ class LearningEngine:
                 logger.info(f"🎭 Emotional state before learning: {emotional_state['dominant_emotion']}")
                 
                 # Form memory of learning intention
-                if self.autobiographical_memory:
+                if self.autobiographical_memory is not None:
                     await self.autobiographical_memory.form_episodic_memory(
                         interaction_content=f"Starting to learn {data_type} in {language}. I feel {emotional_state['dominant_emotion']} about this learning opportunity.",
                         memory_type=MemoryType.LEARNING_EXPERIENCE,
