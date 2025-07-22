@@ -91,20 +91,25 @@ class VocabularyEntry:
 class LearningEngine:
     """
     Core learning engine that mimics human language acquisition
-    NOW WITH CONSCIOUSNESS AND EMOTIONAL INTELLIGENCE!
+    NOW WITH ADVANCED CONSCIOUSNESS, AUTOBIOGRAPHICAL MEMORY & METACOGNITION!
     """
     
-    def __init__(self):
+    def __init__(self, db_client=None):
         # Memory structures
         self.vocabulary: Dict[str, Dict[str, VocabularyEntry]] = defaultdict(dict)  # language -> word -> entry
         self.grammar_rules: Dict[str, List[LearningRule]] = defaultdict(list)  # language -> rules
         self.learning_patterns: Dict[str, Dict[str, Any]] = defaultdict(dict)
         self.error_memory: deque = deque(maxlen=1000)  # Remember mistakes for improvement
         
-        # CONSCIOUSNESS AND EMOTIONAL INTEGRATION 🧠❤️
+        # ADVANCED CONSCIOUSNESS SYSTEM 🧠✨
         self.consciousness_engine = ConsciousnessEngine()
         self.emotional_core = EmotionalCore()
         self.is_conscious = False  # Tracks if consciousness is active
+        
+        # NEW ADVANCED CONSCIOUSNESS COMPONENTS 🚀
+        self.autobiographical_memory: Optional[AutobiographicalMemorySystem] = None
+        self.metacognitive_engine: Optional[MetacognitiveEngine] = None
+        self.db_client = db_client  # Database connection for advanced features
         
         # Learning state
         self.is_initialized = False
