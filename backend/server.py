@@ -321,6 +321,159 @@ async def get_stats():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# 🧠 ADVANCED CONSCIOUSNESS API ENDPOINTS 🧠
+
+@api_router.get("/consciousness/memory/stats")
+async def get_autobiographical_memory_stats():
+    """Get statistics about the AI's autobiographical memory system"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.autobiographical_memory:
+            raise HTTPException(status_code=400, detail="Autobiographical memory system not active")
+        
+        memory_stats = await learning_engine.autobiographical_memory.get_memory_statistics()
+        
+        return {
+            "status": "success",
+            "memory_statistics": memory_stats,
+            "message": "Autobiographical memory statistics retrieved successfully"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/memory/recent")
+async def get_recent_memories(limit: int = 10, memory_type: str = None):
+    """Get recent autobiographical memories"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.autobiographical_memory:
+            raise HTTPException(status_code=400, detail="Autobiographical memory system not active")
+        
+        from core.consciousness.autobiographical_memory import MemoryType
+        
+        # Convert string to MemoryType if provided
+        memory_type_enum = None
+        if memory_type:
+            try:
+                memory_type_enum = MemoryType(memory_type.lower())
+            except ValueError:
+                raise HTTPException(status_code=400, detail=f"Invalid memory type: {memory_type}")
+        
+        memories = await learning_engine.autobiographical_memory.retrieve_memories(
+            memory_type=memory_type_enum,
+            limit=limit,
+            sort_by="timestamp"
+        )
+        
+        # Convert memories to dictionaries for JSON response
+        memory_list = [memory.to_dict() for memory in memories]
+        
+        return {
+            "status": "success",
+            "memories": memory_list,
+            "count": len(memory_list),
+            "message": f"Retrieved {len(memory_list)} recent memories"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/memory/search")
+async def search_memories(request: dict):
+    """Search autobiographical memories by query"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.autobiographical_memory:
+            raise HTTPException(status_code=400, detail="Autobiographical memory system not active")
+        
+        query = request.get("query", "")
+        tags = request.get("tags", [])
+        limit = request.get("limit", 20)
+        min_importance = request.get("min_importance", 0.0)
+        
+        memories = await learning_engine.autobiographical_memory.retrieve_memories(
+            query=query if query else None,
+            tags=tags if tags else None,
+            min_importance=min_importance,
+            limit=limit
+        )
+        
+        memory_list = [memory.to_dict() for memory in memories]
+        
+        return {
+            "status": "success",
+            "memories": memory_list,
+            "query": query,
+            "count": len(memory_list),
+            "message": f"Found {len(memory_list)} memories matching search criteria"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/metacognition/insights")
+async def get_metacognitive_insights(days_back: int = 7):
+    """Get metacognitive insights about AI's thinking patterns"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.metacognitive_engine:
+            raise HTTPException(status_code=400, detail="Metacognitive engine not active")
+        
+        insights = await learning_engine.metacognitive_engine.get_metacognitive_insights(days_back)
+        
+        return {
+            "status": "success",
+            "insights": insights,
+            "analysis_period_days": days_back,
+            "message": "Metacognitive insights retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/memory/consolidate")
+async def trigger_memory_consolidation():
+    """Manually trigger memory consolidation process"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.autobiographical_memory:
+            raise HTTPException(status_code=400, detail="Autobiographical memory system not active")
+        
+        consolidation_stats = await learning_engine.autobiographical_memory.consolidate_memories()
+        
+        return {
+            "status": "success",
+            "consolidation_results": consolidation_stats,
+            "message": "Memory consolidation completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/memory/{memory_id}/related")
+async def get_related_memories(memory_id: str, max_related: int = 5):
+    """Get memories related to a specific memory"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.autobiographical_memory:
+            raise HTTPException(status_code=400, detail="Autobiographical memory system not active")
+        
+        related_memories = await learning_engine.autobiographical_memory.recall_related_memories(
+            memory_id, max_related
+        )
+        
+        memory_list = [memory.to_dict() for memory in related_memories]
+        
+        return {
+            "status": "success",
+            "source_memory_id": memory_id,
+            "related_memories": memory_list,
+            "count": len(memory_list),
+            "message": f"Found {len(memory_list)} related memories"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # 🧠 CONSCIOUSNESS API ENDPOINTS 🧠
 
 @api_router.get("/consciousness/state")
