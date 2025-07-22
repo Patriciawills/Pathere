@@ -279,7 +279,7 @@ class LearningEngine:
             final_understanding = await self._assess_current_understanding(data_type, language)
             
             # 🤔 COMPLETE METACOGNITIVE ANALYSIS
-            if self.metacognitive_engine and metacognitive_process_id:
+            if self.metacognitive_engine is not None and metacognitive_process_id:
                 learning_effectiveness = learning_result.get('effectiveness_score', 0.7)
                 
                 await self.metacognitive_engine.add_reasoning_step(
