@@ -20,6 +20,10 @@ from .consciousness_engine import ConsciousnessEngine
 from .emotional_core import EmotionalCore
 from models.consciousness_models import EmotionType, ConsciousnessLevel
 
+# Import new advanced consciousness components
+from .consciousness.autobiographical_memory import AutobiographicalMemorySystem, MemoryType, EmotionalContext
+from .consciousness.metacognition import MetacognitiveEngine, ThoughtType, LearningStrategy
+
 logger = logging.getLogger(__name__)
 
 @dataclass
