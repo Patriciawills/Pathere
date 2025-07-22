@@ -430,7 +430,7 @@ class LearningEngine:
         """Enhanced vocabulary learning with metacognition and memory"""
         try:
             # Start metacognitive monitoring
-            if self.metacognitive_engine:
+            if self.metacognitive_engine is not None:
                 await self.metacognitive_engine.add_reasoning_step(
                     "Analyzing vocabulary content structure and identifying key learning opportunities"
                 )
