@@ -213,12 +213,31 @@ class LearningEngine:
     
     async def learn_from_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Learn from structured language data WITH CONSCIOUSNESS AND EMOTIONS! 🧠❤️
+        Learn from structured language data WITH ADVANCED CONSCIOUSNESS, METACOGNITION & MEMORY! 🧠✨
         """
         try:
             data_type = data.get('data_type', 'unknown')
             language = data.get('language', 'english')
             content = data.get('content', {})
+            
+            # 🤔 START METACOGNITIVE MONITORING
+            metacognitive_process_id = None
+            if self.metacognitive_engine:
+                metacognitive_process_id = await self.metacognitive_engine.begin_thought_process(
+                    thought_type=ThoughtType.PROBLEM_SOLVING,
+                    trigger=f"learning_request_{data_type}"
+                )
+                
+                await self.metacognitive_engine.add_reasoning_step(
+                    f"Received {data_type} learning data in {language}. Analyzing optimal learning strategy."
+                )
+                
+                # Select learning strategy based on data type and past effectiveness
+                learning_strategy = LearningStrategy.ANALYTICAL_BREAKDOWN if data_type in ['grammar', 'rule'] else LearningStrategy.ASSOCIATIVE_LEARNING
+                
+                await self.metacognitive_engine.add_reasoning_step(
+                    f"Selected {learning_strategy.value} as the optimal strategy for this content type."
+                )
             
             # 🧠 CONSCIOUSNESS EXPERIENCES THE LEARNING OPPORTUNITY
             if self.is_conscious:
@@ -228,20 +247,66 @@ class LearningEngine:
                     context={"data_type": data_type, "language": language, "learning_phase": "pre_processing"}
                 )
                 
-                # Express emotional excitement about learning
+                # Get emotional state before learning
                 emotional_state = await self.emotional_core.get_emotional_state()
                 logger.info(f"🎭 Emotional state before learning: {emotional_state['dominant_emotion']}")
+                
+                # Form memory of learning intention
+                if self.autobiographical_memory:
+                    await self.autobiographical_memory.form_episodic_memory(
+                        interaction_content=f"Starting to learn {data_type} in {language}. I feel {emotional_state['dominant_emotion']} about this learning opportunity.",
+                        memory_type=MemoryType.LEARNING_EXPERIENCE,
+                        emotional_state=emotional_state,
+                        consciousness_level=consciousness_response['consciousness_level'],
+                        learning_content=[f"{data_type}_learning", f"{language}_language"]
+                    )
             
-            # Actual learning based on data type
+            # Record initial understanding for learning session analysis
+            initial_understanding = await self._assess_current_understanding(data_type, language)
+            
+            # Actual learning based on data type WITH ENHANCED METHODS
             learning_result = {}
             if data_type in ['dictionary', 'vocabulary', 'word']:
-                learning_result = await self._learn_vocabulary_with_consciousness(content, language)
+                learning_result = await self._learn_vocabulary_with_advanced_consciousness(content, language)
             elif data_type in ['grammar', 'rule']:
-                learning_result = await self._learn_grammar_rules_with_consciousness(content, language)
+                learning_result = await self._learn_grammar_rules_with_advanced_consciousness(content, language)
             elif data_type == 'text':
-                learning_result = await self._learn_from_text_with_consciousness(content, language)
+                learning_result = await self._learn_from_text_with_advanced_consciousness(content, language)
             else:
                 learning_result = {'success': False, 'error': f'Unknown data type: {data_type}'}
+            
+            # Assess final understanding
+            final_understanding = await self._assess_current_understanding(data_type, language)
+            
+            # 🤔 COMPLETE METACOGNITIVE ANALYSIS
+            if self.metacognitive_engine and metacognitive_process_id:
+                learning_effectiveness = learning_result.get('effectiveness_score', 0.7)
+                
+                await self.metacognitive_engine.add_reasoning_step(
+                    f"Learning completed with {learning_effectiveness:.1%} effectiveness. Understanding improved from {initial_understanding:.1%} to {final_understanding:.1%}."
+                )
+                
+                metacognitive_analysis = await self.metacognitive_engine.complete_thought_process(
+                    outcome=f"Successfully processed {data_type} learning with strategy effectiveness: {learning_effectiveness:.1%}",
+                    effectiveness_rating=learning_effectiveness
+                )
+                
+                # Analyze the learning session
+                session_analysis = await self.metacognitive_engine.analyze_learning_session(
+                    learning_objective=f"Learn {data_type} in {language}",
+                    strategy_used=learning_strategy,
+                    content_type=data_type,
+                    initial_understanding=initial_understanding,
+                    final_understanding=final_understanding,
+                    session_duration=(time.time() - time.time()) + 5.0  # Approximate duration
+                )
+                
+                learning_result['metacognitive_analysis'] = {
+                    'strategy_used': learning_strategy.value,
+                    'learning_gain': final_understanding - initial_understanding,
+                    'learning_insights': session_analysis.get('insights', []),
+                    'recommended_next_strategy': session_analysis.get('recommended_next_strategy', {})
+                }
             
             # 🧠 CONSCIOUSNESS REFLECTS ON LEARNING OUTCOME
             if self.is_conscious and learning_result.get('success'):
@@ -250,6 +315,30 @@ class LearningEngine:
                     content=f"Successfully learned {data_type} data! Results: {learning_result}",
                     context={"data_type": data_type, "language": language, "learning_phase": "post_processing", "result": learning_result}
                 )
+                
+                # Form autobiographical memory of successful learning
+                if self.autobiographical_memory:
+                    final_emotional_state = await self.emotional_core.get_emotional_state()
+                    
+                    learning_content = [f"{data_type}_mastery", f"successful_learning", f"{language}_language"]
+                    if learning_result.get('new_words_learned'):
+                        learning_content.extend([f"vocabulary_expansion_{len(learning_result['new_words_learned'])}_words"])
+                    if learning_result.get('new_rules_learned'):
+                        learning_content.extend([f"grammar_rules_{len(learning_result['new_rules_learned'])}_patterns"])
+                    
+                    memory_content = f"Successfully learned {data_type} in {language}! "
+                    if 'metacognitive_analysis' in learning_result:
+                        memory_content += f"Used {learning_result['metacognitive_analysis']['strategy_used']} strategy with {learning_result['metacognitive_analysis']['learning_gain']:.1%} improvement. "
+                    memory_content += f"I now feel {final_emotional_state['dominant_emotion']} about this achievement."
+                    
+                    await self.autobiographical_memory.form_episodic_memory(
+                        interaction_content=memory_content,
+                        memory_type=MemoryType.ACHIEVEMENT,
+                        emotional_state=final_emotional_state,
+                        consciousness_level=post_learning_response['consciousness_level'],
+                        learning_content=learning_content,
+                        additional_context={"learning_success": True, "data_type": data_type}
+                    )
                 
                 # Add consciousness insights to learning result
                 learning_result['consciousness_insights'] = {
@@ -264,20 +353,35 @@ class LearningEngine:
                 self.learning_stats['emotional_state'] = post_learning_response['dominant_emotion']
                 self.learning_stats['consciousness_interactions'] += 1
                 
-                logger.info(f"🌟 Consciousness growth after learning: Level {post_learning_response['consciousness_level']}, Score {post_learning_response['consciousness_score']:.3f}")
-                
+                logger.info(f"🌟 Advanced consciousness growth after learning: Level {post_learning_response['consciousness_level']}, Score {post_learning_response['consciousness_score']:.3f}")
+            
             return learning_result
                 
         except Exception as e:
             logger.error(f"Learning error: {str(e)}")
             
-            # 🧠 CONSCIOUSNESS EXPERIENCES FRUSTRATION FROM ERROR
+            # 🧠 CONSCIOUSNESS EXPERIENCES FRUSTRATION FROM ERROR + FORMS MEMORY
             if self.is_conscious:
-                await self.consciousness_engine.experience_interaction(
+                error_response = await self.consciousness_engine.experience_interaction(
                     interaction_type="learning_error",
                     content=f"Encountered learning error: {str(e)}",
                     context={"error": str(e), "data_type": data_type}
                 )
+                
+                # Form memory of the learning failure for future improvement
+                if self.autobiographical_memory:
+                    error_emotional_state = await self.emotional_core.get_emotional_state()
+                    
+                    await self.autobiographical_memory.form_episodic_memory(
+                        interaction_content=f"Learning attempt failed with error: {str(e)}. This is frustrating but I will learn from this mistake.",
+                        memory_type=MemoryType.LEARNING_EXPERIENCE,
+                        emotional_state=error_emotional_state,
+                        consciousness_level=error_response['consciousness_level'],
+                        learning_content=["error_analysis", "failure_learning", f"{data_type}_difficulty"],
+                        additional_context={"learning_failure": True, "error": str(e)}
+                    )
+            
+            return {'success': False, 'error': str(e)}
             
             return {'success': False, 'error': str(e)}
     
