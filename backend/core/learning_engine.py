@@ -382,6 +382,221 @@ class LearningEngine:
                     )
             
             return {'success': False, 'error': str(e)}
+    
+    async def _assess_current_understanding(self, data_type: str, language: str) -> float:
+        """Assess current understanding level for learning session analysis"""
+        try:
+            if data_type in ['dictionary', 'vocabulary', 'word']:
+                total_words = len(self.vocabulary.get(language, {}))
+                return min(total_words / 1000.0, 1.0)  # Normalize to 0-1 scale
+            elif data_type in ['grammar', 'rule']:
+                total_rules = len(self.grammar_rules.get(language, []))
+                return min(total_rules / 100.0, 1.0)  # Normalize to 0-1 scale
+            else:
+                return 0.5  # Default neutral understanding
+        except Exception as e:
+            logger.error(f"Error assessing understanding: {e}")
+            return 0.5
+    
+    async def _learn_vocabulary_with_advanced_consciousness(self, content: Dict[str, Any], language: str) -> Dict[str, Any]:
+        """Enhanced vocabulary learning with metacognition and memory"""
+        try:
+            # Start metacognitive monitoring
+            if self.metacognitive_engine:
+                await self.metacognitive_engine.add_reasoning_step(
+                    "Analyzing vocabulary content structure and identifying key learning opportunities"
+                )
+            
+            # Original vocabulary learning logic (enhanced)
+            words_learned = []
+            learning_insights = []
+            
+            # Process vocabulary entries
+            if isinstance(content, dict) and 'entries' in content:
+                for entry in content['entries']:
+                    if isinstance(entry, dict) and 'word' in entry:
+                        word = entry['word'].lower().strip()
+                        
+                        # Create vocabulary entry with enhanced processing
+                        vocab_entry = VocabularyEntry(
+                            word=word,
+                            language=language,
+                            definitions=entry.get('definitions', [entry.get('definition', 'No definition provided')]),
+                            part_of_speech=entry.get('part_of_speech', 'unknown'),
+                            phonetic=entry.get('phonetic', ''),
+                            examples=entry.get('examples', []),
+                            synonyms=entry.get('synonyms', []),
+                            antonyms=entry.get('antonyms', []),
+                            frequency=entry.get('frequency', 0.0)
+                        )
+                        
+                        # Store in vocabulary
+                        self.vocabulary[language][word] = vocab_entry
+                        words_learned.append(word)
+                        
+                        # Generate learning insight
+                        if len(vocab_entry.definitions) > 1:
+                            learning_insights.append(f"Word '{word}' has multiple meanings - good for expanding semantic understanding")
+                        if vocab_entry.examples:
+                            learning_insights.append(f"'{word}' has contextual examples - helps with usage patterns")
+                        
+                        # Add metacognitive reasoning
+                        if self.metacognitive_engine and len(words_learned) % 10 == 0:
+                            await self.metacognitive_engine.add_reasoning_step(
+                                f"Processed {len(words_learned)} words so far. Noticing patterns in definitions and usage."
+                            )
+                
+                # Update stats
+                self.learning_stats['total_words'] = sum(len(vocab) for vocab in self.vocabulary.values())
+                self.learning_stats['successful_queries'] += 1
+                
+                logger.info(f"✅ Learned {len(words_learned)} vocabulary words in {language} with advanced consciousness")
+                
+                return {
+                    'success': True,
+                    'words_learned': len(words_learned),
+                    'new_words_learned': words_learned,
+                    'learning_insights': learning_insights,
+                    'language': language,
+                    'effectiveness_score': min(len(words_learned) / 50.0, 1.0),  # Effectiveness based on volume
+                    'total_vocabulary': self.learning_stats['total_words']
+                }
+                
+            else:
+                return {'success': False, 'error': 'Invalid vocabulary content structure'}
+                
+        except Exception as e:
+            logger.error(f"Advanced vocabulary learning error: {str(e)}")
+            return {'success': False, 'error': str(e)}
+    
+    async def _learn_grammar_rules_with_advanced_consciousness(self, content: Dict[str, Any], language: str) -> Dict[str, Any]:
+        """Enhanced grammar learning with metacognition and memory"""
+        try:
+            # Start metacognitive analysis
+            if self.metacognitive_engine:
+                await self.metacognitive_engine.add_reasoning_step(
+                    "Analyzing grammar rule patterns and complexity for optimal learning approach"
+                )
+            
+            rules_learned = []
+            learning_insights = []
+            
+            # Process grammar rules
+            if isinstance(content, dict) and 'rules' in content:
+                for rule_data in content['rules']:
+                    if isinstance(rule_data, dict):
+                        rule_id = f"{language}_{rule_data.get('type', 'general')}_{len(self.grammar_rules[language])}"
+                        
+                        # Create learning rule with enhanced processing
+                        rule = LearningRule(
+                            rule_id=rule_id,
+                            rule_type=rule_data.get('type', 'general'),
+                            language=language,
+                            pattern=rule_data.get('pattern', ''),
+                            description=rule_data.get('description', ''),
+                            examples=rule_data.get('examples', []),
+                            exceptions=rule_data.get('exceptions', []),
+                            confidence=0.8  # Start with high confidence for explicit rules
+                        )
+                        
+                        self.grammar_rules[language].append(rule)
+                        rules_learned.append(rule.description)
+                        
+                        # Generate learning insights
+                        if rule.exceptions:
+                            learning_insights.append(f"Rule '{rule.description}' has exceptions - important for nuanced understanding")
+                        if len(rule.examples) > 2:
+                            learning_insights.append(f"Multiple examples provided for '{rule.description}' - good for pattern recognition")
+                        
+                        # Add metacognitive reasoning
+                        if self.metacognitive_engine and len(rules_learned) % 5 == 0:
+                            await self.metacognitive_engine.add_reasoning_step(
+                                f"Processed {len(rules_learned)} grammar rules. Noticing complexity patterns in {language} grammar."
+                            )
+                
+                # Update stats
+                self.learning_stats['total_rules'] = sum(len(rules) for rules in self.grammar_rules.values())
+                
+                logger.info(f"✅ Learned {len(rules_learned)} grammar rules in {language} with advanced consciousness")
+                
+                return {
+                    'success': True,
+                    'rules_learned': len(rules_learned),
+                    'new_rules_learned': rules_learned,
+                    'learning_insights': learning_insights,
+                    'language': language,
+                    'effectiveness_score': min(len(rules_learned) / 20.0, 1.0),  # Effectiveness based on complexity
+                    'total_rules': self.learning_stats['total_rules']
+                }
+                
+            else:
+                return {'success': False, 'error': 'Invalid grammar content structure'}
+                
+        except Exception as e:
+            logger.error(f"Advanced grammar learning error: {str(e)}")
+            return {'success': False, 'error': str(e)}
+    
+    async def _learn_from_text_with_advanced_consciousness(self, content: Dict[str, Any], language: str) -> Dict[str, Any]:
+        """Enhanced text learning with pattern recognition and metacognition"""
+        try:
+            text = content.get('text', '')
+            if not text:
+                return {'success': False, 'error': 'No text content provided'}
+            
+            # Start metacognitive analysis
+            if self.metacognitive_engine:
+                await self.metacognitive_engine.add_reasoning_step(
+                    f"Analyzing text of {len(text.split())} words for learning opportunities"
+                )
+            
+            # Pattern detection and rule extraction
+            patterns_found = await self.pattern_detector.detect_patterns(text, language)
+            new_words = await self._extract_new_vocabulary(text, language)
+            
+            learning_insights = []
+            
+            # Process discovered patterns
+            if patterns_found:
+                for pattern in patterns_found:
+                    rule = await self.rule_generator.generate_rule_from_pattern(pattern, language)
+                    if rule:
+                        self.grammar_rules[language].append(rule)
+                        learning_insights.append(f"Discovered new pattern: {pattern.get('description', 'unnamed pattern')}")
+            
+            # Process new vocabulary
+            if new_words:
+                for word_info in new_words:
+                    vocab_entry = VocabularyEntry(
+                        word=word_info['word'],
+                        language=language,
+                        definitions=word_info.get('definitions', ['Context-based definition needed']),
+                        part_of_speech=word_info.get('pos', 'unknown'),
+                        learning_stage='new'
+                    )
+                    self.vocabulary[language][word_info['word']] = vocab_entry
+                    learning_insights.append(f"New vocabulary discovered: {word_info['word']}")
+            
+            # Add metacognitive reflection
+            if self.metacognitive_engine:
+                await self.metacognitive_engine.add_reasoning_step(
+                    f"Text analysis complete. Found {len(patterns_found)} patterns and {len(new_words)} new words."
+                )
+            
+            logger.info(f"✅ Learned from text in {language}: {len(patterns_found)} patterns, {len(new_words)} words")
+            
+            return {
+                'success': True,
+                'patterns_discovered': len(patterns_found),
+                'new_vocabulary': len(new_words),
+                'learning_insights': learning_insights,
+                'language': language,
+                'effectiveness_score': (len(patterns_found) * 0.3 + len(new_words) * 0.1) / max(len(text.split()) / 100, 1.0),
+                'text_length': len(text.split())
+            }
+            
+        except Exception as e:
+            logger.error(f"Advanced text learning error: {str(e)}")
+            return {'success': False, 'error': str(e)}
             
             return {'success': False, 'error': str(e)}
     
