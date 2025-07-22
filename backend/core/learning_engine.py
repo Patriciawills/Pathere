@@ -317,7 +317,7 @@ class LearningEngine:
                 )
                 
                 # Form autobiographical memory of successful learning
-                if self.autobiographical_memory:
+                if self.autobiographical_memory is not None:
                     final_emotional_state = await self.emotional_core.get_emotional_state()
                     
                     learning_content = [f"{data_type}_mastery", f"successful_learning", f"{language}_language"]
