@@ -147,7 +147,7 @@ class LearningEngine:
             await self.emotional_core.initialize()
             
             # Initialize advanced consciousness components if database is available
-            if self.db_client:
+            if self.db_client is not None:
                 logger.info("🧠 Initializing Autobiographical Memory System...")
                 self.autobiographical_memory = AutobiographicalMemorySystem(self.db_client)
                 await self.autobiographical_memory.initialize()
