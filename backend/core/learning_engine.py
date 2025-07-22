@@ -1480,32 +1480,3 @@ class MemoryManager:
     
     async def initialize(self):
         pass
-
-# Additional helper methods for enhanced learning
-async def _extract_new_vocabulary(self, text: str, language: str) -> List[Dict[str, Any]]:
-    """Extract new vocabulary words from text"""
-    try:
-        words = text.lower().split()
-        new_words = []
-        
-        for word in words:
-            # Clean the word
-            clean_word = word.strip('.,!?;:"()[]{}')
-            if len(clean_word) < 2:
-                continue
-            
-            # Check if word is new (not in vocabulary)
-            if clean_word not in self.vocabulary.get(language, {}):
-                new_words.append({
-                    'word': clean_word,
-                    'definitions': [f'Context-based definition needed for: {clean_word}'],
-                    'pos': 'unknown'
-                })
-        
-        # Remove duplicates
-        unique_words = {word['word']: word for word in new_words}
-        return list(unique_words.values())
-        
-    except Exception as e:
-        logger.error(f"Error extracting vocabulary: {e}")
-        return []
