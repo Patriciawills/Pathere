@@ -501,7 +501,7 @@ class LearningEngine:
         """Enhanced grammar learning with metacognition and memory"""
         try:
             # Start metacognitive analysis
-            if self.metacognitive_engine:
+            if self.metacognitive_engine is not None:
                 await self.metacognitive_engine.add_reasoning_step(
                     "Analyzing grammar rule patterns and complexity for optimal learning approach"
                 )
