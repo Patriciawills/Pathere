@@ -1450,6 +1450,30 @@ class RuleGenerator:
     
     async def initialize(self):
         pass
+    
+    async def generate_rule_from_pattern(self, pattern: Dict[str, Any], language: str) -> Optional['LearningRule']:
+        """Generate a learning rule from a detected pattern"""
+        try:
+            if pattern.get('type') == 'sentence_structure':
+                rule_id = f"{language}_pattern_{hash(pattern['example']) % 10000}"
+                
+                rule = LearningRule(
+                    rule_id=rule_id,
+                    rule_type='pattern',
+                    language=language,
+                    pattern=f"PATTERN: {pattern['description']}",
+                    description=f"Discovered pattern: {pattern['description']}",
+                    examples=[pattern['example']],
+                    confidence=min(0.7, pattern.get('complexity', 0.5))
+                )
+                
+                return rule
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error generating rule from pattern: {e}")
+            return None
 
 class MemoryManager:
     """Manages memory usage and optimization"""
