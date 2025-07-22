@@ -469,7 +469,7 @@ class LearningEngine:
                             learning_insights.append(f"'{word}' has contextual examples - helps with usage patterns")
                         
                         # Add metacognitive reasoning
-                        if self.metacognitive_engine and len(words_learned) % 10 == 0:
+                        if self.metacognitive_engine is not None and len(words_learned) % 10 == 0:
                             await self.metacognitive_engine.add_reasoning_step(
                                 f"Processed {len(words_learned)} words so far. Noticing patterns in definitions and usage."
                             )
