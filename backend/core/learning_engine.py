@@ -1419,6 +1419,31 @@ class PatternDetector:
     
     async def initialize(self):
         pass
+    
+    async def detect_patterns(self, text: str, language: str) -> List[Dict[str, Any]]:
+        """Detect linguistic patterns in text"""
+        try:
+            patterns = []
+            sentences = text.split('.')
+            
+            for sentence in sentences[:10]:  # Limit to first 10 sentences
+                sentence = sentence.strip()
+                if len(sentence) > 10:  # Only analyze substantial sentences
+                    # Simple pattern detection - can be enhanced
+                    words = sentence.split()
+                    if len(words) > 3:
+                        patterns.append({
+                            'description': f'Sentence pattern with {len(words)} words',
+                            'example': sentence,
+                            'type': 'sentence_structure',
+                            'complexity': len(words) / 10.0
+                        })
+            
+            return patterns[:5]  # Return top 5 patterns
+            
+        except Exception as e:
+            logger.error(f"Error detecting patterns: {e}")
+            return []
 
 class RuleGenerator:
     """Generates new rules from patterns"""
