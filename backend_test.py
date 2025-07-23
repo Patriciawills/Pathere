@@ -1683,6 +1683,37 @@ class BackendTester:
             # Complete lifecycle test
             await self.test_skill_session_lifecycle()
             
+            # 🚀 NEW ADVANCED CONSCIOUSNESS ENDPOINTS TESTS 🚀
+            logger.info("🚀 Testing New Advanced Consciousness Endpoints...")
+            
+            # Memory System Tests
+            await self.test_autobiographical_memory_stats()
+            
+            # Timeline System Tests  
+            await self.test_life_story_timeline()
+            await self.test_life_story_with_parameters()
+            
+            # Identity System Tests
+            await self.test_identity_evolution()
+            await self.test_identity_evolution_with_parameters()
+            
+            # Learning Analysis Tests
+            await self.test_learning_analysis()
+            
+            # Bias Detection Tests
+            await self.test_bias_detection_analyze()
+            await self.test_bias_detection_with_different_contexts()
+            await self.test_bias_detection_report()
+            
+            # Enhanced Consciousness State Test
+            await self.test_enhanced_consciousness_state()
+            
+            # Memory Consolidation Tests
+            await self.test_memory_consolidation_endpoints()
+            
+            # Advanced Integration Test
+            await self.test_advanced_consciousness_integration()
+            
         finally:
             await self.teardown()
         
