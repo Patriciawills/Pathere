@@ -31,6 +31,7 @@ from .consciousness.bias_detection import CognitiveBiasDetector, CognitiveBias, 
 from .consciousness.uncertainty_engine import UncertaintyQuantificationEngine, UncertaintyType, ConfidenceLevel
 from .consciousness.theory_of_mind import PerspectiveTakingEngine, MentalStateType, PerspectiveType
 from .consciousness.motivation_system import PersonalMotivationSystem, MotivationType, GoalStatus
+from .consciousness.social_context import SocialContextAnalyzer, RelationshipType, CommunicationStyle
 
 logger = logging.getLogger(__name__)
 
