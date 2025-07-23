@@ -855,6 +855,182 @@ async def get_consciousness_milestones():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# 🎯 UNCERTAINTY QUANTIFICATION ENGINE ENDPOINTS 🎯
+
+@api_router.post("/consciousness/uncertainty/assess")
+async def assess_uncertainty(request: dict):
+    """Assess uncertainty for a given topic or query"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.uncertainty_engine:
+            raise HTTPException(status_code=400, detail="Uncertainty quantification engine not active")
+        
+        topic = request.get("topic", "")
+        query_context = request.get("query_context", "")
+        available_information = request.get("available_information", [])
+        reasoning_chain = request.get("reasoning_chain", [])
+        domain = request.get("domain", "general")
+        
+        if not topic:
+            raise HTTPException(status_code=400, detail="Topic is required for uncertainty assessment")
+        
+        assessment = await learning_engine.uncertainty_engine.assess_uncertainty(
+            topic=topic,
+            query_context=query_context,
+            available_information=available_information,
+            reasoning_chain=reasoning_chain,
+            domain=domain
+        )
+        
+        return {
+            "status": "success",
+            "uncertainty_assessment": assessment.to_dict(),
+            "message": "Uncertainty assessment completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/uncertainty/calibrate")
+async def update_confidence_calibration(request: dict):
+    """Update confidence calibration based on actual outcomes"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.uncertainty_engine:
+            raise HTTPException(status_code=400, detail="Uncertainty quantification engine not active")
+        
+        stated_confidence = request.get("stated_confidence")
+        actual_accuracy = request.get("actual_accuracy")
+        domain = request.get("domain", "general")
+        sample_size = request.get("sample_size", 1)
+        
+        if stated_confidence is None or actual_accuracy is None:
+            raise HTTPException(
+                status_code=400, 
+                detail="stated_confidence and actual_accuracy are required"
+            )
+        
+        if not (0.0 <= stated_confidence <= 1.0) or not (0.0 <= actual_accuracy <= 1.0):
+            raise HTTPException(
+                status_code=400,
+                detail="Confidence and accuracy values must be between 0.0 and 1.0"
+            )
+        
+        calibration = await learning_engine.uncertainty_engine.update_confidence_calibration(
+            stated_confidence=stated_confidence,
+            actual_accuracy=actual_accuracy,
+            domain=domain,
+            sample_size=sample_size
+        )
+        
+        return {
+            "status": "success",
+            "calibration_update": calibration.to_dict(),
+            "message": "Confidence calibration updated successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/uncertainty/insights")
+async def get_uncertainty_insights(days_back: int = 30, domain: str = None):
+    """Get comprehensive uncertainty insights and patterns"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.uncertainty_engine:
+            raise HTTPException(status_code=400, detail="Uncertainty quantification engine not active")
+        
+        insights = await learning_engine.uncertainty_engine.get_uncertainty_insights(
+            days_back=days_back,
+            domain=domain
+        )
+        
+        return {
+            "status": "success",
+            "uncertainty_insights": insights,
+            "message": "Uncertainty insights retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/uncertainty/reasoning")
+async def quantify_reasoning_uncertainty(request: dict):
+    """Quantify uncertainty in a reasoning chain"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.uncertainty_engine:
+            raise HTTPException(status_code=400, detail="Uncertainty quantification engine not active")
+        
+        reasoning_steps = request.get("reasoning_steps", [])
+        evidence_base = request.get("evidence_base", [])
+        domain = request.get("domain", "reasoning")
+        
+        if not reasoning_steps:
+            raise HTTPException(status_code=400, detail="reasoning_steps are required")
+        
+        uncertainty_analysis = await learning_engine.uncertainty_engine.quantify_reasoning_uncertainty(
+            reasoning_steps=reasoning_steps,
+            evidence_base=evidence_base,
+            domain=domain
+        )
+        
+        return {
+            "status": "success",
+            "reasoning_uncertainty": uncertainty_analysis,
+            "message": "Reasoning uncertainty quantified successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/uncertainty/gaps/identify")
+async def identify_knowledge_gap(request: dict):
+    """Explicitly identify a knowledge gap"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.uncertainty_engine:
+            raise HTTPException(status_code=400, detail="Uncertainty quantification engine not active")
+        
+        gap_type = request.get("gap_type")
+        topic_area = request.get("topic_area", "")
+        description = request.get("description", "")
+        severity = request.get("severity", 0.5)
+        
+        if not gap_type or not topic_area or not description:
+            raise HTTPException(
+                status_code=400, 
+                detail="gap_type, topic_area, and description are required"
+            )
+        
+        # Import the enum for validation
+        from core.consciousness.uncertainty_engine import KnowledgeGapType
+        
+        try:
+            gap_type_enum = KnowledgeGapType(gap_type)
+        except ValueError:
+            valid_types = [t.value for t in KnowledgeGapType]
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid gap_type. Valid types are: {valid_types}"
+            )
+        
+        knowledge_gap = await learning_engine.uncertainty_engine.identify_knowledge_gap(
+            gap_type=gap_type_enum,
+            topic_area=topic_area,
+            description=description,
+            severity=severity
+        )
+        
+        return {
+            "status": "success",
+            "knowledge_gap": knowledge_gap.to_dict(),
+            "message": "Knowledge gap identified successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Skill Acquisition Engine Endpoints
 @api_router.post("/skills/learn")
 async def start_skill_learning(request: dict):
