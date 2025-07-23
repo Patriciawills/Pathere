@@ -363,7 +363,7 @@ class SocialContextAnalyzer:
     async def get_communication_style_for_user(self, user_id: str) -> Dict[str, Any]:
         """Get current communication style recommendation for a user"""
         try:
-            if self.contexts_collection:
+            if self.contexts_collection is not None:
                 context_data = await self.contexts_collection.find_one({'user_id': user_id})
                 if context_data:
                     context = SocialContext(context_data)
