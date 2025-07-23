@@ -170,7 +170,7 @@ class SocialContextAnalyzer:
     
     async def _get_or_create_context(self, user_id: str, interaction_data: Dict[str, Any]) -> SocialContext:
         """Get existing context or create new one for user"""
-        if self.contexts_collection:
+        if self.contexts_collection is not None:
             # Try to find existing context
             existing_context = await self.contexts_collection.find_one({'user_id': user_id})
             if existing_context:
