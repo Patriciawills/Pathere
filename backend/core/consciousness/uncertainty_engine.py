@@ -875,9 +875,10 @@ class UncertaintyQuantificationEngine:
     async def _analyze_step_uncertainty(self, step: str, evidence: List[str], domain: str) -> Dict[str, Any]:
         return {"uncertainty": 0.3, "sources": ["limited evidence"], "confidence": 0.7}
     
-    async def _propagate_uncertainty(self, cumulative: float, step_uncertainty: float) -> float:
+    async def _propagate_uncertainty(self, cumulative: float, step_uncertainty: Dict[str, Any]) -> float:
         # Simple uncertainty propagation model
-        return min(cumulative + step_uncertainty * 0.1, 1.0)
+        uncertainty_value = step_uncertainty.get('uncertainty', 0.0)
+        return min(cumulative + uncertainty_value * 0.1, 1.0)
     
     async def _generate_reasoning_uncertainty_reduction(self, steps, uncertainties, weakest) -> List[str]:
         return ["Strengthen evidence for weak reasoning steps", "Consider alternative reasoning paths"]
