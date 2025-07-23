@@ -772,3 +772,31 @@ class PerspectiveTakingEngine:
     
     async def _generate_emotional_support_strategies(self, emotions, context):
         return ["Active listening", "Provide clear information", "Allow processing time"]
+    
+    async def get_tracked_agents(self, limit: int = 20) -> List[Dict[str, Any]]:
+        """Get list of agents being tracked for perspective-taking"""
+        try:
+            cursor = self.agent_profiles_collection.find(
+                {},
+                sort=[("last_updated", -1)],
+                limit=limit
+            )
+            
+            agents = []
+            async for agent_doc in cursor:
+                # Create a simplified agent representation
+                agent_data = {
+                    "agent_id": agent_doc.get("agent_id"),
+                    "last_updated": agent_doc.get("last_updated"),
+                    "interaction_count": len(agent_doc.get("interaction_history", [])),
+                    "mental_states_count": len(agent_doc.get("attributed_mental_states", [])),
+                    "perspective_confidence": agent_doc.get("perspective_understanding_quality", {}).get("overall_confidence", 0.0),
+                    "dominant_traits": agent_doc.get("personality_traits", {})
+                }
+                agents.append(agent_data)
+            
+            return agents
+            
+        except Exception as e:
+            logger.error(f"Error retrieving tracked agents: {str(e)}")
+            return []
