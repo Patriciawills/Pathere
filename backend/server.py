@@ -1031,6 +1031,158 @@ async def identify_knowledge_gap(request: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# 🧠 THEORY OF MIND / PERSPECTIVE-TAKING ENGINE ENDPOINTS 🧠
+
+@api_router.post("/consciousness/perspective/analyze")
+async def analyze_perspective(request: dict):
+    """Analyze the perspective of a target person/agent"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.theory_of_mind:
+            raise HTTPException(status_code=400, detail="Theory of mind engine not active")
+        
+        target_agent = request.get("target_agent")
+        context = request.get("context", "")
+        available_information = request.get("available_information", [])
+        interaction_history = request.get("interaction_history", [])
+        current_situation = request.get("current_situation", "")
+        
+        if not target_agent:
+            raise HTTPException(status_code=400, detail="target_agent is required")
+        
+        perspective_analysis = await learning_engine.theory_of_mind.analyze_perspective(
+            target_agent=target_agent,
+            context=context,
+            available_information=available_information,
+            interaction_history=interaction_history,
+            current_situation=current_situation
+        )
+        
+        return {
+            "status": "success",
+            "perspective_analysis": perspective_analysis.to_dict(),
+            "message": "Perspective analysis completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/perspective/mental-state")
+async def attribute_mental_state(request: dict):
+    """Attribute mental states to a specific agent"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.theory_of_mind:
+            raise HTTPException(status_code=400, detail="Theory of mind engine not active")
+        
+        agent_identifier = request.get("agent_identifier")
+        context = request.get("context", "")
+        behavioral_evidence = request.get("behavioral_evidence", [])
+        interaction_history = request.get("interaction_history", [])
+        
+        if not agent_identifier:
+            raise HTTPException(status_code=400, detail="agent_identifier is required")
+        
+        mental_state = await learning_engine.theory_of_mind.attribute_mental_state(
+            agent_identifier=agent_identifier,
+            context=context,
+            behavioral_evidence=behavioral_evidence,
+            interaction_history=interaction_history
+        )
+        
+        return {
+            "status": "success",
+            "mental_state": mental_state.to_dict(),
+            "message": "Mental state attribution completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/perspective/predict-behavior")
+async def predict_behavior(request: dict):
+    """Predict behavior based on mental state understanding"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.theory_of_mind:
+            raise HTTPException(status_code=400, detail="Theory of mind engine not active")
+        
+        agent_identifier = request.get("agent_identifier")
+        context = request.get("context", "")
+        time_horizon = request.get("time_horizon", 3600)  # Default 1 hour
+        situation_factors = request.get("situation_factors", [])
+        
+        if not agent_identifier:
+            raise HTTPException(status_code=400, detail="agent_identifier is required")
+        
+        behavior_prediction = await learning_engine.theory_of_mind.predict_behavior(
+            agent_identifier=agent_identifier,
+            context=context,
+            time_horizon=time_horizon,
+            situation_factors=situation_factors
+        )
+        
+        return {
+            "status": "success",
+            "behavior_prediction": behavior_prediction.to_dict(),
+            "message": "Behavior prediction completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/perspective/simulate-conversation")
+async def simulate_conversation(request: dict):
+    """Simulate a conversation from another person's perspective"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.theory_of_mind:
+            raise HTTPException(status_code=400, detail="Theory of mind engine not active")
+        
+        agent_identifier = request.get("agent_identifier")
+        conversation_topic = request.get("conversation_topic", "")
+        your_messages = request.get("your_messages", [])
+        context = request.get("context", "")
+        
+        if not agent_identifier:
+            raise HTTPException(status_code=400, detail="agent_identifier is required")
+        
+        conversation_simulation = await learning_engine.theory_of_mind.simulate_conversation(
+            agent_identifier=agent_identifier,
+            conversation_topic=conversation_topic,
+            your_messages=your_messages,
+            context=context
+        )
+        
+        return {
+            "status": "success",
+            "conversation_simulation": conversation_simulation.to_dict(),
+            "message": "Conversation simulation completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/perspective/agents")
+async def get_tracked_agents(limit: int = 20):
+    """Get list of agents being tracked for perspective-taking"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.theory_of_mind:
+            raise HTTPException(status_code=400, detail="Theory of mind engine not active")
+        
+        agents = await learning_engine.theory_of_mind.get_tracked_agents(limit=limit)
+        
+        return {
+            "status": "success",
+            "tracked_agents": [agent.to_dict() for agent in agents],
+            "total_count": len(agents),
+            "message": "Tracked agents retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Skill Acquisition Engine Endpoints
 @api_router.post("/skills/learn")
 async def start_skill_learning(request: dict):
