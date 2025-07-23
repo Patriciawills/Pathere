@@ -1209,6 +1209,96 @@ async def get_tracked_agents(limit: int = 20):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# 🤝 SOCIAL CONTEXT ANALYZER ENDPOINTS 🤝
+
+@api_router.post("/consciousness/social/analyze")
+async def analyze_social_context(request: dict):
+    """Analyze social context and adapt communication style"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.social_context_analyzer:
+            raise HTTPException(status_code=400, detail="Social context analyzer not active")
+        
+        user_id = request.get("user_id")
+        interaction_data = request.get("interaction_data", {})
+        
+        if not user_id:
+            raise HTTPException(status_code=400, detail="user_id is required")
+        
+        analysis = await learning_engine.social_context_analyzer.analyze_social_context(
+            user_id=user_id,
+            interaction_data=interaction_data
+        )
+        
+        return {
+            "status": "success",
+            "social_context_analysis": analysis,
+            "message": "Social context analyzed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/social/style/{user_id}")
+async def get_communication_style(user_id: str):
+    """Get recommended communication style for a user"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.social_context_analyzer:
+            raise HTTPException(status_code=400, detail="Social context analyzer not active")
+        
+        style = await learning_engine.social_context_analyzer.get_communication_style_for_user(user_id)
+        
+        return {
+            "status": "success",
+            "user_id": user_id,
+            "communication_style": style,
+            "message": "Communication style retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/social/relationship/{user_id}")
+async def get_relationship_insights(user_id: str):
+    """Get relationship insights for a user"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.social_context_analyzer:
+            raise HTTPException(status_code=400, detail="Social context analyzer not active")
+        
+        insights = await learning_engine.social_context_analyzer.get_relationship_insights(user_id)
+        
+        return {
+            "status": "success",
+            "relationship_insights": insights,
+            "message": "Relationship insights retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/consciousness/social/preferences/{user_id}")
+async def update_communication_preferences(user_id: str, request: dict):
+    """Update communication preferences for a user"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.social_context_analyzer:
+            raise HTTPException(status_code=400, detail="Social context analyzer not active")
+        
+        preferences = request.get("preferences", {})
+        
+        result = await learning_engine.social_context_analyzer.update_user_preferences(user_id, preferences)
+        
+        return {
+            "status": "success",
+            "update_result": result,
+            "message": "Communication preferences updated successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # 🎯 PERSONAL MOTIVATION SYSTEM ENDPOINTS 🎯
 
 @api_router.post("/consciousness/motivation/goal/create")
