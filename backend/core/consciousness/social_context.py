@@ -392,7 +392,7 @@ class SocialContextAnalyzer:
     async def get_relationship_insights(self, user_id: str) -> Dict[str, Any]:
         """Get relationship insights for a user"""
         try:
-            if not self.contexts_collection:
+            if self.contexts_collection is None:
                 return {'error': 'Database not available'}
             
             context_data = await self.contexts_collection.find_one({'user_id': user_id})
