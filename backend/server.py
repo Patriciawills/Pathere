@@ -1183,6 +1183,177 @@ async def get_tracked_agents(limit: int = 20):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# 🎯 PERSONAL MOTIVATION SYSTEM ENDPOINTS 🎯
+
+@api_router.post("/consciousness/motivation/goal/create")
+async def create_personal_goal(request: dict):
+    """Create a new personal goal"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.motivation_system:
+            raise HTTPException(status_code=400, detail="Personal motivation system not active")
+        
+        title = request.get("title")
+        description = request.get("description")
+        motivation_type_str = request.get("motivation_type")
+        satisfaction_potential = request.get("satisfaction_potential", 0.7)
+        priority = request.get("priority", 0.5)
+        target_days = request.get("target_days")
+        
+        if not all([title, description, motivation_type_str]):
+            raise HTTPException(
+                status_code=400, 
+                detail="title, description, and motivation_type are required"
+            )
+        
+        # Import the enum for validation
+        from core.consciousness.motivation_system import MotivationType
+        
+        try:
+            motivation_type = MotivationType(motivation_type_str)
+        except ValueError:
+            valid_types = [t.value for t in MotivationType]
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid motivation_type. Valid types are: {valid_types}"
+            )
+        
+        goal = await learning_engine.motivation_system.create_personal_goal(
+            title=title,
+            description=description,
+            motivation_type=motivation_type,
+            satisfaction_potential=satisfaction_potential,
+            priority=priority,
+            target_days=target_days
+        )
+        
+        return {
+            "status": "success",
+            "goal": goal.to_dict(),
+            "message": "Personal goal created successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/motivation/goal/work")
+async def work_toward_goal(request: dict):
+    """Record work toward a specific goal"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.motivation_system:
+            raise HTTPException(status_code=400, detail="Personal motivation system not active")
+        
+        goal_id = request.get("goal_id")
+        effort_amount = request.get("effort_amount", 0.1)
+        progress_made = request.get("progress_made", 0.1)
+        context = request.get("context", "")
+        
+        if not goal_id:
+            raise HTTPException(status_code=400, detail="goal_id is required")
+        
+        work_result = await learning_engine.motivation_system.work_toward_goal(
+            goal_id=goal_id,
+            effort_amount=effort_amount,
+            progress_made=progress_made,
+            context=context
+        )
+        
+        return {
+            "status": "success",
+            "work_result": work_result,
+            "message": "Goal progress recorded successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/motivation/goals/active")
+async def get_active_goals(limit: int = 10):
+    """Get currently active personal goals"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.motivation_system:
+            raise HTTPException(status_code=400, detail="Personal motivation system not active")
+        
+        active_goals = await learning_engine.motivation_system.get_active_goals(limit=limit)
+        
+        return {
+            "status": "success",
+            "active_goals": active_goals,
+            "total_count": len(active_goals),
+            "message": "Active goals retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/motivation/goals/generate")
+async def generate_new_goals(request: dict):
+    """Generate new personal goals based on current motivations"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.motivation_system:
+            raise HTTPException(status_code=400, detail="Personal motivation system not active")
+        
+        context = request.get("context", "")
+        max_goals = request.get("max_goals", 3)
+        
+        new_goals = await learning_engine.motivation_system.generate_new_goals(
+            context=context,
+            max_goals=max_goals
+        )
+        
+        return {
+            "status": "success",
+            "new_goals": [goal.to_dict() for goal in new_goals],
+            "goals_generated": len(new_goals),
+            "message": f"Generated {len(new_goals)} new personal goals"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/motivation/profile")
+async def get_motivation_profile():
+    """Get current motivation profile and analysis"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.motivation_system:
+            raise HTTPException(status_code=400, detail="Personal motivation system not active")
+        
+        motivation_profile = await learning_engine.motivation_system.get_motivation_profile()
+        
+        return {
+            "status": "success",
+            "motivation_profile": motivation_profile,
+            "message": "Motivation profile retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/motivation/satisfaction")
+async def assess_goal_satisfaction(days_back: int = 7):
+    """Assess satisfaction from recent goal progress"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.motivation_system:
+            raise HTTPException(status_code=400, detail="Personal motivation system not active")
+        
+        satisfaction_assessment = await learning_engine.motivation_system.assess_goal_satisfaction(
+            days_back=days_back
+        )
+        
+        return {
+            "status": "success",
+            "satisfaction_assessment": satisfaction_assessment,
+            "message": "Goal satisfaction assessment completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Skill Acquisition Engine Endpoints
 @api_router.post("/skills/learn")
 async def start_skill_learning(request: dict):
