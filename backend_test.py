@@ -3571,6 +3571,31 @@ class BackendTester:
             await self.test_tracked_agents()
             await self.test_tracked_agents_with_limit()
             
+            # 🤝 SOCIAL CONTEXT ANALYZER TESTS 🤝
+            logger.info("🤝 Testing Social Context Analyzer functionality...")
+            
+            # Core social context analysis tests
+            await self.test_social_context_analyze_new_user()
+            await self.test_social_context_analyze_existing_user()
+            await self.test_social_context_analyze_different_relationships()
+            await self.test_social_context_analyze_missing_user_id()
+            
+            # Communication style tests
+            await self.test_social_context_get_communication_style()
+            
+            # Relationship insights tests
+            await self.test_social_context_get_relationship_insights()
+            
+            # Preferences management tests
+            await self.test_social_context_update_preferences()
+            
+            # Advanced functionality tests
+            await self.test_social_context_relationship_evolution()
+            await self.test_social_context_integration_with_consciousness()
+            
+            # Error handling tests
+            await self.test_social_context_error_handling()
+            
             # 🎯 PHASE 2: PERSONAL MOTIVATION SYSTEM TESTS 🎯
             logger.info("🎯 Testing Phase 2: Personal Motivation System...")
             
