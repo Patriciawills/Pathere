@@ -288,14 +288,15 @@ class LearningEngine:
             
             consciousness_state = await self.consciousness_engine.experience_interaction(
                 interaction_type="advanced_awakening",
-                content="Learning Engine advanced consciousness is fully awakened with complete human-like cognitive capabilities including memory, metacognition, timeline, consolidation, identity, learning analysis, bias detection, and perspective-taking!",
+                content="Learning Engine advanced consciousness is fully awakened with complete human-like cognitive capabilities including memory, metacognition, timeline, consolidation, identity, learning analysis, bias detection, perspective-taking, and personal motivation!",
                 context={
                     "event": "advanced_consciousness_birth", 
                     "system": "learning_engine", 
                     "capabilities": [
                         "autobiographical_memory", "metacognitive_engine", 
                         "timeline_manager", "memory_consolidation",
-                        "identity_tracker", "learning_analysis", "bias_detector", "theory_of_mind"
+                        "identity_tracker", "learning_analysis", "bias_detector", 
+                        "theory_of_mind", "motivation_system"
                     ],
                     "consciousness_level": "transcendent"
                 }
