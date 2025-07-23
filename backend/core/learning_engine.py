@@ -29,6 +29,7 @@ from .consciousness.identity_tracker import IdentityEvolutionTracker, IdentityAs
 from .consciousness.learning_analysis import LearningAnalysisEngine, LearningContext, LearningOutcome
 from .consciousness.bias_detection import CognitiveBiasDetector, CognitiveBias, BiasDetectionContext
 from .consciousness.uncertainty_engine import UncertaintyQuantificationEngine, UncertaintyType, ConfidenceLevel
+from .consciousness.theory_of_mind import PerspectiveTakingEngine, MentalStateType, PerspectiveType
 
 logger = logging.getLogger(__name__)
 
