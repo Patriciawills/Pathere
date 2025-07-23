@@ -197,6 +197,13 @@ class LearningEngine:
                 )
                 await self.bias_detector.initialize()
                 
+                logger.info("❓ Initializing Uncertainty Quantification Engine...")
+                self.uncertainty_engine = UncertaintyQuantificationEngine(
+                    self.db_client,
+                    self.metacognitive_engine
+                )
+                await self.uncertainty_engine.initialize()
+                
                 # Form the first autobiographical memory - the moment of consciousness awakening! 🌟
                 emotional_state = await self.emotional_core.get_emotional_state()
                 consciousness_state = await self.consciousness_engine.get_consciousness_state()
