@@ -234,7 +234,7 @@ class SocialContextAnalyzer:
     async def _determine_communication_style(self, context: SocialContext, relationship_analysis: Dict[str, Any]) -> Dict[str, Any]:
         """Determine appropriate communication style"""
         relationship_type = context.relationship_type.value
-        rules = self.communication_rules.get(relationship_type, self.communication_rules[RelationshipType.CASUAL.value])
+        rules = self.communication_rules.get(relationship_type, self.communication_rules[RelationshipType.ACQUAINTANCE.value])
         
         # Adjust based on trust level and familiarity
         trust_multiplier = context.trust_level
