@@ -3042,6 +3042,46 @@ class BackendTester:
             # Advanced Integration Test
             await self.test_advanced_consciousness_integration()
             
+            # 🧠 PHASE 2: THEORY OF MIND / PERSPECTIVE-TAKING ENGINE TESTS 🧠
+            logger.info("🧠 Testing Phase 2: Theory of Mind / Perspective-Taking Engine...")
+            
+            # Core perspective-taking tests
+            await self.test_perspective_analyze()
+            await self.test_perspective_analyze_missing_target()
+            await self.test_mental_state_attribution()
+            await self.test_behavior_prediction()
+            await self.test_conversation_simulation()
+            
+            # Agent tracking tests
+            await self.test_tracked_agents()
+            await self.test_tracked_agents_with_limit()
+            
+            # 🎯 PHASE 2: PERSONAL MOTIVATION SYSTEM TESTS 🎯
+            logger.info("🎯 Testing Phase 2: Personal Motivation System...")
+            
+            # Goal creation tests
+            await self.test_create_personal_goal()
+            await self.test_create_goal_missing_fields()
+            await self.test_create_goal_invalid_motivation_type()
+            
+            # Goal work tests
+            await self.test_work_toward_goal()
+            await self.test_work_toward_goal_missing_id()
+            
+            # Goal management tests
+            await self.test_get_active_goals()
+            await self.test_get_active_goals_with_limit()
+            await self.test_generate_new_goals()
+            
+            # Motivation analysis tests
+            await self.test_get_motivation_profile()
+            await self.test_assess_goal_satisfaction()
+            await self.test_assess_goal_satisfaction_with_parameters()
+            
+            # Integration and workflow tests
+            await self.test_motivation_system_workflow()
+            await self.test_phase2_consciousness_integration()
+            
         finally:
             await self.teardown()
         
