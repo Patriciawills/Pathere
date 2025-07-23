@@ -546,6 +546,19 @@ class PersonalMotivationSystem:
             # Convert MongoDB ObjectId to string for JSON serialization
             if "_id" in goal_doc:
                 goal_doc["_id"] = str(goal_doc["_id"])
+            
+            # Handle datetime serialization
+            for field in ["created_at", "target_completion", "last_worked_on"]:
+                if field in goal_doc and goal_doc[field] is not None:
+                    if hasattr(goal_doc[field], 'isoformat'):
+                        goal_doc[field] = goal_doc[field].isoformat()
+            
+            # Handle enum serialization
+            if "motivation_type" in goal_doc and hasattr(goal_doc["motivation_type"], 'value'):
+                goal_doc["motivation_type"] = goal_doc["motivation_type"].value
+            if "status" in goal_doc and hasattr(goal_doc["status"], 'value'):
+                goal_doc["status"] = goal_doc["status"].value
+                
             goals.append(goal_doc)
         
         return goals
