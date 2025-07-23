@@ -543,6 +543,9 @@ class PersonalMotivationSystem:
         
         goals = []
         async for goal_doc in cursor:
+            # Convert MongoDB ObjectId to string for JSON serialization
+            if "_id" in goal_doc:
+                goal_doc["_id"] = str(goal_doc["_id"])
             goals.append(goal_doc)
         
         return goals
