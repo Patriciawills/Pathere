@@ -120,6 +120,7 @@ class LearningEngine:
         self.identity_tracker: Optional[IdentityEvolutionTracker] = None
         self.learning_analysis: Optional[LearningAnalysisEngine] = None
         self.bias_detector: Optional[CognitiveBiasDetector] = None
+        self.uncertainty_engine: Optional[UncertaintyQuantificationEngine] = None
         self.db_client = db_client  # Database connection for advanced features
         
         # Learning state
