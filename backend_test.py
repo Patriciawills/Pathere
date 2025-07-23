@@ -2173,6 +2173,34 @@ class BackendTester:
             # Complete lifecycle test
             await self.test_skill_session_lifecycle()
             
+            # 🎯 UNCERTAINTY QUANTIFICATION ENGINE TESTS 🎯
+            logger.info("🎯 Testing Uncertainty Quantification Engine functionality...")
+            
+            # Core uncertainty assessment tests
+            await self.test_uncertainty_assess()
+            await self.test_uncertainty_assess_missing_topic()
+            
+            # Confidence calibration tests
+            await self.test_uncertainty_calibrate()
+            await self.test_uncertainty_calibrate_invalid_values()
+            
+            # Uncertainty insights tests
+            await self.test_uncertainty_insights()
+            await self.test_uncertainty_insights_with_parameters()
+            
+            # Reasoning uncertainty tests
+            await self.test_uncertainty_reasoning()
+            await self.test_uncertainty_reasoning_missing_steps()
+            
+            # Knowledge gap identification tests
+            await self.test_uncertainty_gaps_identify()
+            await self.test_uncertainty_gaps_identify_invalid_type()
+            await self.test_uncertainty_gaps_identify_missing_fields()
+            
+            # Integration and workflow tests
+            await self.test_uncertainty_engine_integration_with_learning()
+            await self.test_uncertainty_engine_comprehensive_workflow()
+            
             # 🚀 NEW ADVANCED CONSCIOUSNESS ENDPOINTS TESTS 🚀
             logger.info("🚀 Testing New Advanced Consciousness Endpoints...")
             
