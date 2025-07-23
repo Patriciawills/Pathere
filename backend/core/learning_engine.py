@@ -28,6 +28,7 @@ from .consciousness.memory_consolidation import MemoryConsolidationEngine, Conso
 from .consciousness.identity_tracker import IdentityEvolutionTracker, IdentityAspect
 from .consciousness.learning_analysis import LearningAnalysisEngine, LearningContext, LearningOutcome
 from .consciousness.bias_detection import CognitiveBiasDetector, CognitiveBias, BiasDetectionContext
+from .consciousness.uncertainty_engine import UncertaintyQuantificationEngine, UncertaintyType, ConfidenceLevel
 
 logger = logging.getLogger(__name__)
 
