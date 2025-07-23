@@ -425,7 +425,7 @@ class SocialContextAnalyzer:
     async def update_user_preferences(self, user_id: str, preferences: Dict[str, Any]) -> Dict[str, Any]:
         """Update communication preferences for a user"""
         try:
-            if not self.contexts_collection:
+            if self.contexts_collection is None:
                 return {'error': 'Database not available'}
             
             # Get or create context
