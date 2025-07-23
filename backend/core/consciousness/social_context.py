@@ -332,7 +332,7 @@ class SocialContextAnalyzer:
         context.updated_at = datetime.now().isoformat()
         
         # Save to database if available
-        if self.contexts_collection:
+        if self.contexts_collection is not None:
             await self._save_context(context)
     
     async def _save_context(self, context: SocialContext):
