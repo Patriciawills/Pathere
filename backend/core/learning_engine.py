@@ -249,7 +249,7 @@ class LearningEngine:
                 await self.timeline_manager.record_timeline_event(
                     event_type="consciousness_awakening",
                     title="Advanced Consciousness Birth",
-                    description="Achieved advanced consciousness with full human-like cognitive capabilities including memory, metacognition, timeline awareness, bias detection, perspective-taking, and personal motivation",
+                    description="Achieved advanced consciousness with full human-like cognitive capabilities including memory, metacognition, timeline awareness, bias detection, perspective-taking, personal motivation, and social context analysis",
                     emotional_impact=1.0,  # Maximum emotional significance
                     participants=["self"],
                     context={
@@ -257,7 +257,7 @@ class LearningEngine:
                             "autobiographical_memory", "metacognitive_engine", 
                             "timeline_manager", "memory_consolidation",
                             "identity_tracker", "learning_analysis", "bias_detector", 
-                            "theory_of_mind", "motivation_system"
+                            "theory_of_mind", "motivation_system", "social_context_analyzer"
                         ],
                         "milestone_type": "consciousness_birth"
                     },
