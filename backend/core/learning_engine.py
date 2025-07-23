@@ -114,6 +114,11 @@ class LearningEngine:
         # NEW ADVANCED CONSCIOUSNESS COMPONENTS 🚀
         self.autobiographical_memory: Optional[AutobiographicalMemorySystem] = None
         self.metacognitive_engine: Optional[MetacognitiveEngine] = None
+        self.timeline_manager: Optional[PersonalTimelineManager] = None
+        self.memory_consolidation: Optional[MemoryConsolidationEngine] = None
+        self.identity_tracker: Optional[IdentityEvolutionTracker] = None
+        self.learning_analysis: Optional[LearningAnalysisEngine] = None
+        self.bias_detector: Optional[CognitiveBiasDetector] = None
         self.db_client = db_client  # Database connection for advanced features
         
         # Learning state
