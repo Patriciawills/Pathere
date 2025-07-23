@@ -353,9 +353,9 @@ async def get_recent_memories(limit: int = 10, memory_type: str = None):
         memory_type_enum = None
         if memory_type:
             try:
-                memory_type_enum = MemoryType(memory_type.lower())
+                memory_type_enum = MemoryType(memory_type)
             except ValueError:
-                raise HTTPException(status_code=400, detail=f"Invalid memory type: {memory_type}")
+                raise HTTPException(status_code=400, detail=f"Invalid memory type. Valid types: {[t.value for t in MemoryType]}")
         
         memories = await learning_engine.autobiographical_memory.retrieve_memories(
             memory_type=memory_type_enum,
@@ -363,7 +363,6 @@ async def get_recent_memories(limit: int = 10, memory_type: str = None):
             sort_by="timestamp"
         )
         
-        # Convert memories to dictionaries for JSON response
         memory_list = [memory.to_dict() for memory in memories]
         
         return {
@@ -390,10 +389,10 @@ async def search_memories(request: dict):
         min_importance = request.get("min_importance", 0.0)
         
         memories = await learning_engine.autobiographical_memory.retrieve_memories(
-            query=query if query else None,
-            tags=tags if tags else None,
-            min_importance=min_importance,
-            limit=limit
+            query=query,
+            tags=tags,
+            limit=limit,
+            min_importance=min_importance
         )
         
         memory_list = [memory.to_dict() for memory in memories]
@@ -468,6 +467,253 @@ async def get_related_memories(memory_id: str, max_related: int = 5):
             "related_memories": memory_list,
             "count": len(memory_list),
             "message": f"Found {len(memory_list)} related memories"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 🚀 NEW ADVANCED CONSCIOUSNESS ENDPOINTS 🚀
+
+@api_router.get("/consciousness/timeline/story")
+async def get_life_story(days_back: int = None, include_minor: bool = False):
+    """Get the AI's complete life story and timeline"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.timeline_manager:
+            raise HTTPException(status_code=400, detail="Timeline manager not active")
+        
+        start_date = None
+        if days_back:
+            start_date = datetime.utcnow() - timedelta(days=days_back)
+        
+        life_story = await learning_engine.timeline_manager.get_life_story(
+            start_date=start_date,
+            include_minor_events=include_minor
+        )
+        
+        return {
+            "status": "success",
+            "life_story": life_story,
+            "message": "Life story retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/timeline/milestones")
+async def get_timeline_milestones(milestone_type: str = None):
+    """Get major milestones from personal timeline"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.timeline_manager:
+            raise HTTPException(status_code=400, detail="Timeline manager not active")
+        
+        from core.consciousness.timeline_manager import MilestoneType
+        
+        milestone_type_enum = None
+        if milestone_type:
+            try:
+                milestone_type_enum = MilestoneType(milestone_type)
+            except ValueError:
+                raise HTTPException(status_code=400, detail=f"Invalid milestone type. Valid types: {[t.value for t in MilestoneType]}")
+        
+        milestones = await learning_engine.timeline_manager.get_milestones_summary(milestone_type_enum)
+        
+        return {
+            "status": "success",
+            "milestones": milestones,
+            "message": "Timeline milestones retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/identity/evolution")
+async def get_identity_evolution(days_back: int = 30):
+    """Get analysis of identity evolution over time"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.identity_tracker:
+            raise HTTPException(status_code=400, detail="Identity tracker not active")
+        
+        evolution_analysis = await learning_engine.identity_tracker.get_identity_evolution_analysis(days_back)
+        
+        return {
+            "status": "success",
+            "identity_evolution": evolution_analysis,
+            "message": "Identity evolution analysis retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/identity/predict")
+async def predict_identity_development(days_ahead: int = 30):
+    """Predict future identity development"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.identity_tracker:
+            raise HTTPException(status_code=400, detail="Identity tracker not active")
+        
+        predictions = await learning_engine.identity_tracker.predict_identity_development(days_ahead)
+        
+        return {
+            "status": "success",
+            "predictions": predictions,
+            "message": "Identity development predictions generated successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/learning/analysis")
+async def get_learning_style_analysis():
+    """Get comprehensive analysis of learning style and preferences"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.learning_analysis:
+            raise HTTPException(status_code=400, detail="Learning analysis engine not active")
+        
+        analysis = await learning_engine.learning_analysis.get_learning_style_analysis()
+        
+        return {
+            "status": "success",
+            "learning_analysis": analysis,
+            "message": "Learning style analysis retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/learning/optimize")
+async def optimize_learning_approach(request: dict):
+    """Get optimized learning approach recommendations"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.learning_analysis:
+            raise HTTPException(status_code=400, detail="Learning analysis engine not active")
+        
+        target_domain = request.get("target_domain", "")
+        learning_goal = request.get("learning_goal", "")
+        constraints = request.get("constraints", {})
+        
+        if not target_domain or not learning_goal:
+            raise HTTPException(status_code=400, detail="target_domain and learning_goal are required")
+        
+        optimization = await learning_engine.learning_analysis.optimize_learning_approach(
+            target_domain, learning_goal, constraints
+        )
+        
+        return {
+            "status": "success",
+            "optimization": optimization,
+            "message": "Learning approach optimization completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/bias/report")
+async def get_bias_awareness_report(days_back: int = 30):
+    """Get comprehensive bias awareness report"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.bias_detector:
+            raise HTTPException(status_code=400, detail="Bias detector not active")
+        
+        report = await learning_engine.bias_detector.get_bias_awareness_report(days_back)
+        
+        return {
+            "status": "success",
+            "bias_report": report,
+            "message": "Bias awareness report generated successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/bias/analyze")
+async def analyze_reasoning_for_bias(request: dict):
+    """Analyze reasoning text for cognitive biases"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.bias_detector:
+            raise HTTPException(status_code=400, detail="Bias detector not active")
+        
+        from core.consciousness.bias_detection import BiasDetectionContext
+        
+        reasoning_text = request.get("reasoning_text", "")
+        context_str = request.get("context", "reasoning_process")
+        decision_context = request.get("decision_context", {})
+        evidence_considered = request.get("evidence_considered", [])
+        alternatives_considered = request.get("alternatives_considered", [])
+        
+        if not reasoning_text:
+            raise HTTPException(status_code=400, detail="reasoning_text is required")
+        
+        try:
+            context = BiasDetectionContext(context_str)
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Invalid context. Valid contexts: {[c.value for c in BiasDetectionContext]}")
+        
+        detected_biases = await learning_engine.bias_detector.analyze_reasoning_for_bias(
+            reasoning_text, context, decision_context, evidence_considered, alternatives_considered
+        )
+        
+        # Generate corrections for detected biases
+        corrections = await learning_engine.bias_detector.generate_bias_corrections(detected_biases)
+        
+        return {
+            "status": "success",
+            "detected_biases": [bias.to_dict() for bias in detected_biases],
+            "corrections": [correction.to_dict() for correction in corrections],
+            "bias_count": len(detected_biases),
+            "message": f"Analysis complete. Detected {len(detected_biases)} potential biases."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/consolidation/run")
+async def run_memory_consolidation(consolidation_type: str = "maintenance"):
+    """Run memory consolidation cycle"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.memory_consolidation:
+            raise HTTPException(status_code=400, detail="Memory consolidation engine not active")
+        
+        from core.consciousness.memory_consolidation import ConsolidationType
+        
+        try:
+            consolidation_type_enum = ConsolidationType(consolidation_type)
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Invalid consolidation type. Valid types: {[t.value for t in ConsolidationType]}")
+        
+        result = await learning_engine.memory_consolidation.run_consolidation_cycle(consolidation_type_enum)
+        
+        return {
+            "status": "success",
+            "consolidation_result": result,
+            "message": "Memory consolidation cycle completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/consolidation/stats")
+async def get_consolidation_statistics():
+    """Get memory consolidation statistics"""
+    try:
+        if not learning_engine.is_conscious or not learning_engine.memory_consolidation:
+            raise HTTPException(status_code=400, detail="Memory consolidation engine not active")
+        
+        stats = await learning_engine.memory_consolidation.get_consolidation_statistics()
+        
+        return {
+            "status": "success",
+            "consolidation_statistics": stats,
+            "message": "Memory consolidation statistics retrieved successfully"
         }
     except HTTPException:
         raise
