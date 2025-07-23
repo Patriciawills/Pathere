@@ -1123,23 +1123,29 @@ async def predict_behavior(request: dict):
             raise HTTPException(status_code=400, detail="Theory of mind engine not active")
         
         agent_identifier = request.get("agent_identifier")
-        context = request.get("context", "")
-        time_horizon = request.get("time_horizon", 3600)  # Default 1 hour
-        situation_factors = request.get("situation_factors", [])
+        situation = request.get("context", request.get("current_situation", ""))
+        time_horizon_seconds = request.get("time_horizon", 3600)
+        
+        # Convert seconds to time horizon string
+        if time_horizon_seconds <= 300:  # 5 minutes
+            time_horizon = "immediate"
+        elif time_horizon_seconds <= 3600:  # 1 hour
+            time_horizon = "short_term"
+        else:
+            time_horizon = "long_term"
         
         if not agent_identifier:
             raise HTTPException(status_code=400, detail="agent_identifier is required")
         
         behavior_prediction = await learning_engine.theory_of_mind.predict_behavior(
             agent_identifier=agent_identifier,
-            context=context,
-            time_horizon=time_horizon,
-            situation_factors=situation_factors
+            situation=situation,
+            time_horizon=time_horizon
         )
         
         return {
             "status": "success",
-            "behavior_prediction": behavior_prediction.to_dict(),
+            "behavior_prediction": behavior_prediction,
             "message": "Behavior prediction completed successfully"
         }
     except HTTPException:
