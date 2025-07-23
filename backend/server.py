@@ -1075,18 +1075,34 @@ async def attribute_mental_state(request: dict):
             raise HTTPException(status_code=400, detail="Theory of mind engine not active")
         
         agent_identifier = request.get("agent_identifier")
+        state_type_str = request.get("state_type", "belief")
+        content = request.get("context", "")
+        evidence = request.get("behavioral_evidence", [])
         context = request.get("context", "")
-        behavioral_evidence = request.get("behavioral_evidence", [])
-        interaction_history = request.get("interaction_history", [])
+        confidence = request.get("confidence", 0.7)
         
         if not agent_identifier:
             raise HTTPException(status_code=400, detail="agent_identifier is required")
         
+        # Import the enum for validation
+        from core.consciousness.theory_of_mind import MentalStateType
+        
+        try:
+            state_type = MentalStateType(state_type_str)
+        except ValueError:
+            valid_types = [t.value for t in MentalStateType]
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid state_type. Valid types are: {valid_types}"
+            )
+        
         mental_state = await learning_engine.theory_of_mind.attribute_mental_state(
             agent_identifier=agent_identifier,
+            state_type=state_type,
+            content=content,
+            evidence=evidence,
             context=context,
-            behavioral_evidence=behavioral_evidence,
-            interaction_history=interaction_history
+            confidence=confidence
         )
         
         return {
