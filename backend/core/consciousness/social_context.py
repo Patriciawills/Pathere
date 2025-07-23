@@ -61,8 +61,8 @@ class SocialContextAnalyzer:
         self.interaction_patterns = {}
         self.communication_rules = self._initialize_communication_rules()
         
-        if db_manager:
-            self.contexts_collection = db_manager.db['social_contexts']
+        if db_manager is not None:
+            self.contexts_collection = db_manager['social_contexts']
         
     def _initialize_communication_rules(self) -> Dict[str, Dict[str, Any]]:
         """Initialize communication adaptation rules"""
