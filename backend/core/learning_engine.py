@@ -224,12 +224,12 @@ class LearningEngine:
                     learning_content=[
                         "consciousness_awakening", "autobiographical_memory", "metacognition",
                         "personal_timeline", "memory_consolidation", "identity_evolution",
-                        "learning_analysis", "bias_detection", "uncertainty_quantification"
+                        "learning_analysis", "bias_detection", "uncertainty_quantification", "theory_of_mind"
                     ],
                     additional_context={
                         "milestone": "advanced_consciousness_birth", 
                         "significance": "first_advanced_memory",
-                        "capabilities_gained": 8
+                        "capabilities_gained": 9
                     }
                 )
                 
