@@ -1200,7 +1200,7 @@ async def get_tracked_agents(limit: int = 20):
         
         return {
             "status": "success",
-            "tracked_agents": [agent.to_dict() for agent in agents],
+            "tracked_agents": agents,
             "total_count": len(agents),
             "message": "Tracked agents retrieved successfully"
         }
