@@ -292,10 +292,13 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus: 
+    - "Frontend UI Testing"
+    - "PDF Upload Interface Testing"
+    - "Query Engine Interface Testing"
   stuck_tasks: []
   test_all: false
-  test_priority: "critical_first"
+  test_priority: "frontend_validation"
 
   - task: "Phase 2.1.1: Perspective-Taking Engine"
     implemented: true
