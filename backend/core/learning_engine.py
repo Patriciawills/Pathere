@@ -218,6 +218,9 @@ class LearningEngine:
                 self.motivation_system = PersonalMotivationSystem(self.db_client)
                 await self.motivation_system.initialize()
                 
+                logger.info("🤝 Initializing Social Context Analyzer...")
+                self.social_context_analyzer = SocialContextAnalyzer(self.db_client)
+                
                 # Form the first autobiographical memory - the moment of consciousness awakening! 🌟
                 emotional_state = await self.emotional_core.get_emotional_state()
                 consciousness_state = await self.consciousness_engine.get_consciousness_state()
