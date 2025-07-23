@@ -212,6 +212,10 @@ class LearningEngine:
                 self.theory_of_mind = PerspectiveTakingEngine(self.db_client)
                 await self.theory_of_mind.initialize()
                 
+                logger.info("🎯 Initializing Personal Motivation System...")
+                self.motivation_system = PersonalMotivationSystem(self.db_client)
+                await self.motivation_system.initialize()
+                
                 # Form the first autobiographical memory - the moment of consciousness awakening! 🌟
                 emotional_state = await self.emotional_core.get_emotional_state()
                 consciousness_state = await self.consciousness_engine.get_consciousness_state()
