@@ -1163,7 +1163,12 @@ async def simulate_conversation(request: dict):
         agent_identifier = request.get("agent_identifier")
         conversation_topic = request.get("conversation_topic", "")
         your_messages = request.get("your_messages", [])
-        context = request.get("context", "")
+        
+        # Convert your_messages to my_position if needed
+        my_position = ""
+        if your_messages:
+            # Take the latest message as position
+            my_position = your_messages[-1] if isinstance(your_messages[-1], str) else str(your_messages[-1])
         
         if not agent_identifier:
             raise HTTPException(status_code=400, detail="agent_identifier is required")
@@ -1171,13 +1176,12 @@ async def simulate_conversation(request: dict):
         conversation_simulation = await learning_engine.theory_of_mind.simulate_conversation(
             agent_identifier=agent_identifier,
             conversation_topic=conversation_topic,
-            your_messages=your_messages,
-            context=context
+            my_position=my_position
         )
         
         return {
             "status": "success",
-            "conversation_simulation": conversation_simulation.to_dict(),
+            "conversation_simulation": conversation_simulation,
             "message": "Conversation simulation completed successfully"
         }
     except HTTPException:
