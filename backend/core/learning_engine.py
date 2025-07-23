@@ -122,6 +122,7 @@ class LearningEngine:
         self.learning_analysis: Optional[LearningAnalysisEngine] = None
         self.bias_detector: Optional[CognitiveBiasDetector] = None
         self.uncertainty_engine: Optional[UncertaintyQuantificationEngine] = None
+        self.theory_of_mind: Optional[PerspectiveTakingEngine] = None
         self.db_client = db_client  # Database connection for advanced features
         
         # Learning state
