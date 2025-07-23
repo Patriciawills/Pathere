@@ -23,6 +23,11 @@ from models.consciousness_models import EmotionType, ConsciousnessLevel
 # Import new advanced consciousness components
 from .consciousness.autobiographical_memory import AutobiographicalMemorySystem, MemoryType, EmotionalContext
 from .consciousness.metacognition import MetacognitiveEngine, ThoughtType, LearningStrategy
+from .consciousness.timeline_manager import PersonalTimelineManager, MilestoneType, LifePhase
+from .consciousness.memory_consolidation import MemoryConsolidationEngine, ConsolidationType
+from .consciousness.identity_tracker import IdentityEvolutionTracker, IdentityAspect
+from .consciousness.learning_analysis import LearningAnalysisEngine, LearningContext, LearningOutcome
+from .consciousness.bias_detection import CognitiveBiasDetector, CognitiveBias, BiasDetectionContext
 
 logger = logging.getLogger(__name__)
 
