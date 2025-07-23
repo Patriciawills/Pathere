@@ -4007,10 +4007,295 @@ class BackendTester:
         
         logger.info("\n🎯 CRITICAL ISSUES FOUND:" if failed > 0 else "\n✅ ALL TESTS PASSED!")
 
+    async def run_critical_bug_tests(self):
+        """Run tests specifically for the two critical bugs mentioned in the review request"""
+        logger.info("🔍 CRITICAL BUG TESTING - Testing Two Previously Problematic Endpoints...")
+        logger.info(f"Backend URL: {self.base_url}")
+        
+        await self.setup()
+        
+        try:
+            # 🚨 CRITICAL BUG TEST 1: MongoDB ObjectId Serialization Bug
+            logger.info("\n🚨 CRITICAL BUG TEST 1: MongoDB ObjectId Serialization Bug")
+            logger.info("Testing GET /api/consciousness/motivation/goals/active endpoint")
+            
+            # Test with default limit
+            await self.test_motivation_get_active_goals_default_limit()
+            
+            # Test with different limit values
+            await self.test_motivation_get_active_goals_custom_limit()
+            
+            # Test with various limit parameters
+            for limit in [1, 5, 15, 25, 50]:
+                await self.test_motivation_get_active_goals_with_limit(limit)
+            
+            # 🚨 CRITICAL BUG TEST 2: Mathematical Operation Bug
+            logger.info("\n🚨 CRITICAL BUG TEST 2: Mathematical Operation Bug")
+            logger.info("Testing POST /api/consciousness/uncertainty/reasoning endpoint")
+            
+            # Test basic reasoning
+            await self.test_uncertainty_reasoning_basic()
+            
+            # Test with various reasoning_steps combinations
+            await self.test_uncertainty_reasoning_complex()
+            
+            # Test edge cases
+            await self.test_uncertainty_reasoning_edge_cases()
+            
+            # Test with and without evidence_base and domain parameters
+            await self.test_uncertainty_reasoning_with_without_optional_params()
+            
+            # Test empty or single reasoning steps
+            await self.test_uncertainty_reasoning_empty_single_steps()
+            
+        finally:
+            await self.teardown()
+        
+        # Print final results
+        self.print_critical_bug_test_summary()
+        return self.test_results
+
+    async def test_motivation_get_active_goals_with_limit(self, limit: int):
+        """Test GET /api/consciousness/motivation/goals/active endpoint with specific limit"""
+        try:
+            async with self.session.get(f"{self.base_url}/consciousness/motivation/goals/active?limit={limit}") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'active_goals', 'total_count', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        active_goals = result['active_goals']
+                        total_count = result['total_count']
+                        
+                        if isinstance(active_goals, list) and isinstance(total_count, int):
+                            self.log_test_result(f"Motivation Get Active Goals Limit {limit}", True, f"✅ BUG FIXED! Active goals retrieved successfully with limit {limit}: {total_count} goals found")
+                            return active_goals
+                        else:
+                            self.log_test_result(f"Motivation Get Active Goals Limit {limit}", False, error="Invalid data types in response")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result(f"Motivation Get Active Goals Limit {limit}", False, error=f"Missing fields: {missing}")
+                        return None
+                elif response.status == 400:
+                    error_text = await response.text()
+                    if "not active" in error_text.lower():
+                        self.log_test_result(f"Motivation Get Active Goals Limit {limit}", True, "Motivation system not active (expected behavior)")
+                        return []
+                    else:
+                        self.log_test_result(f"Motivation Get Active Goals Limit {limit}", False, error=f"HTTP {response.status}: {error_text}")
+                        return None
+                elif response.status == 500:
+                    error_text = await response.text()
+                    self.log_test_result(f"Motivation Get Active Goals Limit {limit}", False, error=f"❌ BUG STILL EXISTS! 500 Internal Server Error with limit {limit}: {error_text}")
+                    return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result(f"Motivation Get Active Goals Limit {limit}", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result(f"Motivation Get Active Goals Limit {limit}", False, error=str(e))
+            return None
+
+    async def test_uncertainty_reasoning_with_without_optional_params(self):
+        """Test POST /api/consciousness/uncertainty/reasoning with and without optional parameters"""
+        test_cases = [
+            {
+                "name": "With Evidence Base and Domain",
+                "payload": {
+                    "reasoning_steps": [
+                        {"step": "Analyze the problem", "confidence": 0.8},
+                        {"step": "Consider alternatives", "confidence": 0.7}
+                    ],
+                    "evidence_base": ["fact1", "fact2", "observation1"],
+                    "domain": "scientific_reasoning"
+                }
+            },
+            {
+                "name": "Without Evidence Base",
+                "payload": {
+                    "reasoning_steps": [
+                        {"step": "Make initial assessment", "confidence": 0.6},
+                        {"step": "Draw conclusions", "confidence": 0.5}
+                    ],
+                    "domain": "general"
+                }
+            },
+            {
+                "name": "Without Domain",
+                "payload": {
+                    "reasoning_steps": [
+                        {"step": "Evaluate options", "confidence": 0.9},
+                        {"step": "Select best approach", "confidence": 0.8}
+                    ],
+                    "evidence_base": ["evidence1", "evidence2"]
+                }
+            },
+            {
+                "name": "Minimal Parameters",
+                "payload": {
+                    "reasoning_steps": [
+                        {"step": "Basic reasoning", "confidence": 0.7}
+                    ]
+                }
+            }
+        ]
+        
+        for test_case in test_cases:
+            try:
+                async with self.session.post(f"{self.base_url}/consciousness/uncertainty/reasoning",
+                                           json=test_case["payload"],
+                                           headers={'Content-Type': 'application/json'}) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        required_fields = ['status', 'reasoning_uncertainty', 'message']
+                        
+                        if all(field in result for field in required_fields):
+                            self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", True, f"✅ BUG FIXED! Reasoning uncertainty quantified successfully")
+                        else:
+                            missing = [f for f in required_fields if f not in result]
+                            self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=f"Missing fields: {missing}")
+                    elif response.status == 400:
+                        error_text = await response.text()
+                        if "not active" in error_text.lower():
+                            self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", True, "Uncertainty engine not active (expected behavior)")
+                        else:
+                            self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=f"HTTP {response.status}: {error_text}")
+                    elif response.status == 500:
+                        error_text = await response.text()
+                        if "unsupported operand type(s) for *: dict and float" in error_text:
+                            self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=f"❌ BUG STILL EXISTS! Mathematical operation error: {error_text}")
+                        else:
+                            self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=f"HTTP {response.status}: {error_text}")
+                    else:
+                        error_text = await response.text()
+                        self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=f"HTTP {response.status}: {error_text}")
+                        
+            except Exception as e:
+                self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=str(e))
+
+    async def test_uncertainty_reasoning_empty_single_steps(self):
+        """Test POST /api/consciousness/uncertainty/reasoning with empty or single reasoning steps"""
+        test_cases = [
+            {
+                "name": "Empty Reasoning Steps",
+                "payload": {
+                    "reasoning_steps": [],
+                    "evidence_base": ["some evidence"],
+                    "domain": "testing"
+                },
+                "expect_error": True
+            },
+            {
+                "name": "Single Reasoning Step",
+                "payload": {
+                    "reasoning_steps": [
+                        {"step": "Single step analysis", "confidence": 0.8}
+                    ],
+                    "evidence_base": ["evidence1"],
+                    "domain": "single_step"
+                },
+                "expect_error": False
+            },
+            {
+                "name": "Complex Single Step",
+                "payload": {
+                    "reasoning_steps": [
+                        {"step": "Complex multi-faceted analysis with detailed reasoning", "confidence": 0.9, "details": "Additional context"}
+                    ],
+                    "evidence_base": ["complex evidence", "supporting data"],
+                    "domain": "complex_reasoning"
+                },
+                "expect_error": False
+            }
+        ]
+        
+        for test_case in test_cases:
+            try:
+                async with self.session.post(f"{self.base_url}/consciousness/uncertainty/reasoning",
+                                           json=test_case["payload"],
+                                           headers={'Content-Type': 'application/json'}) as response:
+                    if test_case["expect_error"]:
+                        if response.status == 400:
+                            self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", True, "Empty reasoning steps properly rejected")
+                        else:
+                            self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=f"Expected 400 error for empty steps, got {response.status}")
+                    else:
+                        if response.status == 200:
+                            result = await response.json()
+                            if 'reasoning_uncertainty' in result:
+                                self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", True, f"✅ BUG FIXED! Single step reasoning processed successfully")
+                            else:
+                                self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error="Missing reasoning_uncertainty in response")
+                        elif response.status == 400:
+                            error_text = await response.text()
+                            if "not active" in error_text.lower():
+                                self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", True, "Uncertainty engine not active (expected behavior)")
+                            else:
+                                self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=f"HTTP {response.status}: {error_text}")
+                        elif response.status == 500:
+                            error_text = await response.text()
+                            if "unsupported operand type(s) for *: dict and float" in error_text:
+                                self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=f"❌ BUG STILL EXISTS! Mathematical operation error: {error_text}")
+                            else:
+                                self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=f"HTTP {response.status}: {error_text}")
+                        else:
+                            error_text = await response.text()
+                            self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=f"HTTP {response.status}: {error_text}")
+                        
+            except Exception as e:
+                self.log_test_result(f"Uncertainty Reasoning {test_case['name']}", False, error=str(e))
+
+    def print_critical_bug_test_summary(self):
+        """Print critical bug test summary"""
+        total = self.test_results['total_tests']
+        passed = self.test_results['passed_tests']
+        failed = self.test_results['failed_tests']
+        
+        logger.info("\n" + "="*80)
+        logger.info("🚨 CRITICAL BUG TEST SUMMARY")
+        logger.info("="*80)
+        logger.info(f"Total Tests: {total}")
+        logger.info(f"✅ Passed: {passed}")
+        logger.info(f"❌ Failed: {failed}")
+        logger.info(f"Success Rate: {(passed/total*100):.1f}%" if total > 0 else "0%")
+        logger.info("="*80)
+        
+        # Analyze specific bug status
+        objectid_bug_fixed = True
+        math_bug_fixed = True
+        
+        for test in self.test_results['test_details']:
+            if not test['success']:
+                if "BUG STILL EXISTS" in test['error']:
+                    if "500 Internal Server Error" in test['error'] and "motivation" in test['test_name'].lower():
+                        objectid_bug_fixed = False
+                    elif "unsupported operand type(s) for *: dict and float" in test['error']:
+                        math_bug_fixed = False
+        
+        logger.info("\n🔍 BUG STATUS ANALYSIS:")
+        logger.info(f"📊 MongoDB ObjectId Serialization Bug: {'✅ FIXED' if objectid_bug_fixed else '❌ STILL EXISTS'}")
+        logger.info(f"🧮 Mathematical Operation Bug: {'✅ FIXED' if math_bug_fixed else '❌ STILL EXISTS'}")
+        
+        if failed > 0:
+            logger.info("\n❌ FAILED TESTS:")
+            for test in self.test_results['test_details']:
+                if not test['success']:
+                    logger.info(f"  - {test['test_name']}: {test['error']}")
+        
+        logger.info("\n🎯 CRITICAL BUG VERIFICATION COMPLETE!")
+
 async def main():
     """Main test runner"""
     tester = BackendTester()
-    results = await tester.run_all_tests()
+    
+    # Check if we should run critical bug tests only
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "--critical-bugs":
+        results = await tester.run_critical_bug_tests()
+    else:
+        results = await tester.run_all_tests()
     
     # Return exit code based on test results
     return 0 if results['failed_tests'] == 0 else 1
