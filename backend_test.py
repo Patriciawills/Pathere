@@ -4034,15 +4034,12 @@ class BackendTester:
             logger.info("Testing POST /api/consciousness/uncertainty/reasoning endpoint")
             
             # Test basic reasoning
-            await self.test_uncertainty_reasoning_basic()
+            await self.test_uncertainty_reasoning()
             
             # Test with various reasoning_steps combinations
-            await self.test_uncertainty_reasoning_complex()
+            await self.test_uncertainty_reasoning_missing_steps()
             
             # Test edge cases
-            await self.test_uncertainty_reasoning_edge_cases()
-            
-            # Test with and without evidence_base and domain parameters
             await self.test_uncertainty_reasoning_with_without_optional_params()
             
             # Test empty or single reasoning steps
