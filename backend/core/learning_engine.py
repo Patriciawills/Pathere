@@ -126,6 +126,7 @@ class LearningEngine:
         self.uncertainty_engine: Optional[UncertaintyQuantificationEngine] = None
         self.theory_of_mind: Optional[PerspectiveTakingEngine] = None
         self.motivation_system: Optional[PersonalMotivationSystem] = None
+        self.social_context_analyzer: Optional[SocialContextAnalyzer] = None
         self.db_client = db_client  # Database connection for advanced features
         
         # Learning state
