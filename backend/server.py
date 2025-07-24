@@ -50,6 +50,9 @@ app = FastAPI(title="Minimalist Grammar & Vocabulary Engine", version="1.0.0")
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Add Phase 3 Creative Intelligence routes
+app.include_router(phase3_router)
+
 # API Models
 class ProcessPDFRequest(BaseModel):
     pdf_file_id: str
