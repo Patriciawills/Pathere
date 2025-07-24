@@ -4752,8 +4752,6 @@ class BackendTester:
         await self.run_phase2_consciousness_tests()
         
         logger.info("✅ ALL BACKEND TESTS COMPLETED ✅")
-
-    async def run_all_tests(self):
         """Run all backend tests"""
         logger.info("🚀 Starting Backend API Tests...")
         logger.info(f"Testing against: {self.base_url}")
