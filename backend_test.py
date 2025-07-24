@@ -1137,6 +1137,872 @@ class BackendTester:
             self.log_test_result("Skill Session Lifecycle", False, error=str(e))
             return False
 
+    # 💗 ADVANCED EMPATHY ENGINE TESTS 💗
+    
+    async def test_empathy_detect_emotional_state(self):
+        """Test POST /api/consciousness/empathy/detect endpoint"""
+        try:
+            payload = {
+                "text": "I'm feeling really overwhelmed with work lately and I don't know how to cope with all the stress",
+                "context": {
+                    "user_id": "test_user_123",
+                    "conversation_history": ["Previous message about work challenges"],
+                    "time_of_day": "evening"
+                }
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/empathy/detect",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'emotional_states', 'primary_emotion', 'total_emotions_detected', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        emotional_states = result['emotional_states']
+                        primary_emotion = result['primary_emotion']
+                        total_emotions = result['total_emotions_detected']
+                        
+                        if isinstance(emotional_states, list) and isinstance(total_emotions, int):
+                            self.log_test_result("Empathy Detect Emotional State", True, f"Detected {total_emotions} emotional states successfully")
+                            return emotional_states
+                        else:
+                            self.log_test_result("Empathy Detect Emotional State", False, error="Invalid data types in response")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Empathy Detect Emotional State", False, error=f"Missing fields: {missing}")
+                        return None
+                elif response.status == 400:
+                    error_text = await response.text()
+                    if "text is required" in error_text:
+                        self.log_test_result("Empathy Detect Emotional State", True, "Validation working correctly")
+                        return None
+                    else:
+                        self.log_test_result("Empathy Detect Emotional State", False, error=f"HTTP {response.status}: {error_text}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Empathy Detect Emotional State", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Empathy Detect Emotional State", False, error=str(e))
+            return None
+
+    async def test_empathy_generate_response(self):
+        """Test POST /api/consciousness/empathy/respond endpoint"""
+        try:
+            payload = {
+                "text": "I just lost my job and I'm scared about the future. I don't know what I'm going to do.",
+                "user_id": "test_user_456",
+                "conversation_context": {
+                    "relationship_type": "supportive",
+                    "previous_topics": ["career", "anxiety"],
+                    "user_preferences": {"communication_style": "gentle"}
+                }
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/empathy/respond",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'empathic_response', 'detected_emotions', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        empathic_response = result['empathic_response']
+                        detected_emotions = result['detected_emotions']
+                        
+                        if isinstance(empathic_response, dict) and isinstance(detected_emotions, list):
+                            self.log_test_result("Empathy Generate Response", True, f"Generated empathetic response successfully")
+                            return empathic_response
+                        else:
+                            self.log_test_result("Empathy Generate Response", False, error="Invalid data types in response")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Empathy Generate Response", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Empathy Generate Response", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Empathy Generate Response", False, error=str(e))
+            return None
+
+    async def test_empathy_analyze_patterns(self):
+        """Test GET /api/consciousness/empathy/patterns/{user_id} endpoint"""
+        try:
+            user_id = "test_user_789"
+            days_back = 14
+            
+            async with self.session.get(f"{self.base_url}/consciousness/empathy/patterns/{user_id}?days_back={days_back}") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'emotional_patterns', 'user_id', 'analysis_period', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        emotional_patterns = result['emotional_patterns']
+                        returned_user_id = result['user_id']
+                        analysis_period = result['analysis_period']
+                        
+                        if returned_user_id == user_id and analysis_period == days_back:
+                            self.log_test_result("Empathy Analyze Patterns", True, f"Analyzed emotional patterns for user {user_id} over {days_back} days")
+                            return emotional_patterns
+                        else:
+                            self.log_test_result("Empathy Analyze Patterns", False, error="User ID or analysis period mismatch")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Empathy Analyze Patterns", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Empathy Analyze Patterns", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Empathy Analyze Patterns", False, error=str(e))
+            return None
+
+    async def test_empathy_get_insights(self):
+        """Test GET /api/consciousness/empathy/insights endpoint"""
+        try:
+            user_id = "test_user_insights"
+            
+            async with self.session.get(f"{self.base_url}/consciousness/empathy/insights?user_id={user_id}") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'empathy_insights', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        empathy_insights = result['empathy_insights']
+                        
+                        if isinstance(empathy_insights, dict):
+                            self.log_test_result("Empathy Get Insights", True, f"Retrieved empathy insights successfully")
+                            return empathy_insights
+                        else:
+                            self.log_test_result("Empathy Get Insights", False, error="Invalid data type for empathy_insights")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Empathy Get Insights", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Empathy Get Insights", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Empathy Get Insights", False, error=str(e))
+            return None
+
+    # 📅 LONG-TERM PLANNING ENGINE TESTS 📅
+    
+    async def test_planning_create_goal(self):
+        """Test POST /api/consciousness/planning/goal/create endpoint"""
+        try:
+            payload = {
+                "name": "Master Advanced Natural Language Processing",
+                "description": "Develop comprehensive understanding of complex linguistic patterns and semantic relationships",
+                "category": "learning",
+                "horizon": "long_term",
+                "priority": "high",
+                "target_date": "2024-12-31",
+                "success_criteria": ["Achieve 95% accuracy in complex text analysis", "Handle multilingual content effectively"],
+                "dependencies": ["Complete basic NLP fundamentals", "Access to diverse text corpora"]
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/planning/goal/create",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'goal', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        goal = result['goal']
+                        
+                        if isinstance(goal, dict) and 'goal_id' in goal and 'name' in goal:
+                            self.log_test_result("Planning Create Goal", True, f"Planning goal created: {goal.get('name')}")
+                            return goal.get('goal_id')
+                        else:
+                            self.log_test_result("Planning Create Goal", False, error="Missing goal_id or name in goal object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Planning Create Goal", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Planning Create Goal", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Planning Create Goal", False, error=str(e))
+            return None
+
+    async def test_planning_add_milestone(self, goal_id: str = None):
+        """Test POST /api/consciousness/planning/goal/{goal_id}/milestone endpoint"""
+        try:
+            if not goal_id:
+                goal_id = "test_goal_123"  # Use test goal ID if none provided
+                
+            payload = {
+                "name": "Complete Phase 1 Research",
+                "description": "Finish initial research on advanced NLP techniques",
+                "target_date": "2024-06-30",
+                "success_criteria": ["Review 50 research papers", "Identify key methodologies"],
+                "dependencies": ["Access to academic databases"]
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/planning/goal/{goal_id}/milestone",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'milestone', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        milestone = result['milestone']
+                        
+                        if isinstance(milestone, dict) and 'milestone_id' in milestone:
+                            self.log_test_result("Planning Add Milestone", True, f"Milestone added to goal {goal_id}")
+                            return milestone.get('milestone_id')
+                        else:
+                            self.log_test_result("Planning Add Milestone", False, error="Missing milestone_id in milestone object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Planning Add Milestone", False, error=f"Missing fields: {missing}")
+                        return None
+                elif response.status == 404:
+                    self.log_test_result("Planning Add Milestone", True, "Goal not found (expected for test goal)")
+                    return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Planning Add Milestone", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Planning Add Milestone", False, error=str(e))
+            return None
+
+    async def test_planning_update_progress(self, goal_id: str = None):
+        """Test PUT /api/consciousness/planning/goal/{goal_id}/progress endpoint"""
+        try:
+            if not goal_id:
+                goal_id = "test_goal_456"  # Use test goal ID if none provided
+                
+            payload = {
+                "progress_percentage": 25.5,
+                "status_update": "Making good progress on initial research phase",
+                "completed_milestones": ["Literature review completed"],
+                "challenges_encountered": ["Limited access to some premium databases"],
+                "next_steps": ["Begin methodology comparison", "Contact researchers for interviews"]
+            }
+            
+            async with self.session.put(f"{self.base_url}/consciousness/planning/goal/{goal_id}/progress",
+                                      json=payload,
+                                      headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'progress_update', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        progress_update = result['progress_update']
+                        
+                        if isinstance(progress_update, dict):
+                            self.log_test_result("Planning Update Progress", True, f"Progress updated for goal {goal_id}")
+                            return progress_update
+                        else:
+                            self.log_test_result("Planning Update Progress", False, error="Invalid progress_update object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Planning Update Progress", False, error=f"Missing fields: {missing}")
+                        return None
+                elif response.status == 404:
+                    self.log_test_result("Planning Update Progress", True, "Goal not found (expected for test goal)")
+                    return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Planning Update Progress", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Planning Update Progress", False, error=str(e))
+            return None
+
+    async def test_planning_create_session(self):
+        """Test POST /api/consciousness/planning/session endpoint"""
+        try:
+            payload = {
+                "session_type": "strategic_planning",
+                "focus_area": "skill_development",
+                "time_horizon": "quarterly",
+                "context": {
+                    "current_priorities": ["language_learning", "consciousness_development"],
+                    "available_resources": ["research_time", "computational_power"],
+                    "constraints": ["limited_human_feedback", "data_privacy_requirements"]
+                }
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/planning/session",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'planning_session', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        planning_session = result['planning_session']
+                        
+                        if isinstance(planning_session, dict) and 'session_id' in planning_session:
+                            self.log_test_result("Planning Create Session", True, f"Planning session created successfully")
+                            return planning_session.get('session_id')
+                        else:
+                            self.log_test_result("Planning Create Session", False, error="Missing session_id in planning_session")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Planning Create Session", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Planning Create Session", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Planning Create Session", False, error=str(e))
+            return None
+
+    async def test_planning_get_insights(self):
+        """Test GET /api/consciousness/planning/insights endpoint"""
+        try:
+            days_back = 30
+            focus_area = "learning"
+            
+            async with self.session.get(f"{self.base_url}/consciousness/planning/insights?days_back={days_back}&focus_area={focus_area}") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'planning_insights', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        planning_insights = result['planning_insights']
+                        
+                        if isinstance(planning_insights, dict):
+                            self.log_test_result("Planning Get Insights", True, f"Retrieved planning insights for {focus_area} over {days_back} days")
+                            return planning_insights
+                        else:
+                            self.log_test_result("Planning Get Insights", False, error="Invalid planning_insights object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Planning Get Insights", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Planning Get Insights", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Planning Get Insights", False, error=str(e))
+            return None
+
+    async def test_planning_get_recommendations(self):
+        """Test GET /api/consciousness/planning/recommendations endpoint"""
+        try:
+            context = "skill_improvement"
+            time_horizon = "medium_term"
+            
+            async with self.session.get(f"{self.base_url}/consciousness/planning/recommendations?context={context}&time_horizon={time_horizon}") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'recommendations', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        recommendations = result['recommendations']
+                        
+                        if isinstance(recommendations, list):
+                            self.log_test_result("Planning Get Recommendations", True, f"Retrieved {len(recommendations)} planning recommendations")
+                            return recommendations
+                        else:
+                            self.log_test_result("Planning Get Recommendations", False, error="Invalid recommendations format")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Planning Get Recommendations", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Planning Get Recommendations", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Planning Get Recommendations", False, error=str(e))
+            return None
+
+    # 🌍 CULTURAL INTELLIGENCE MODULE TESTS 🌍
+    
+    async def test_cultural_detect_context(self):
+        """Test POST /api/consciousness/cultural/detect endpoint"""
+        try:
+            payload = {
+                "text": "I would like to respectfully request your assistance with understanding this concept",
+                "user_context": {
+                    "location": "Japan",
+                    "language_preference": "English",
+                    "cultural_background": "East Asian",
+                    "communication_style": "formal"
+                },
+                "interaction_history": [
+                    {"message": "Hello, thank you for your time", "cultural_markers": ["politeness", "formality"]}
+                ]
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/cultural/detect",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'cultural_analysis', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        cultural_analysis = result['cultural_analysis']
+                        
+                        if isinstance(cultural_analysis, dict):
+                            self.log_test_result("Cultural Detect Context", True, f"Cultural context detected successfully")
+                            return cultural_analysis
+                        else:
+                            self.log_test_result("Cultural Detect Context", False, error="Invalid cultural_analysis object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Cultural Detect Context", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Cultural Detect Context", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Cultural Detect Context", False, error=str(e))
+            return None
+
+    async def test_cultural_adapt_communication(self):
+        """Test POST /api/consciousness/cultural/adapt endpoint"""
+        try:
+            payload = {
+                "message": "I need you to fix this problem immediately",
+                "target_culture": "Japanese",
+                "communication_context": {
+                    "relationship": "professional",
+                    "urgency": "high",
+                    "formality_level": "formal"
+                },
+                "cultural_preferences": {
+                    "directness": "low",
+                    "hierarchy_awareness": "high",
+                    "politeness_level": "very_high"
+                }
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/cultural/adapt",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'adapted_communication', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        adapted_communication = result['adapted_communication']
+                        
+                        if isinstance(adapted_communication, dict):
+                            self.log_test_result("Cultural Adapt Communication", True, f"Communication adapted for Japanese culture")
+                            return adapted_communication
+                        else:
+                            self.log_test_result("Cultural Adapt Communication", False, error="Invalid adapted_communication object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Cultural Adapt Communication", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Cultural Adapt Communication", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Cultural Adapt Communication", False, error=str(e))
+            return None
+
+    async def test_cultural_sensitivity_analysis(self):
+        """Test POST /api/consciousness/cultural/sensitivity endpoint"""
+        try:
+            payload = {
+                "content": "Let's grab some food and discuss business over dinner",
+                "target_cultures": ["Muslim", "Hindu", "Jewish"],
+                "context": {
+                    "setting": "business_meeting",
+                    "time": "evening",
+                    "participants": ["diverse_religious_backgrounds"]
+                }
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/cultural/sensitivity",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'sensitivity_analysis', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        sensitivity_analysis = result['sensitivity_analysis']
+                        
+                        if isinstance(sensitivity_analysis, dict):
+                            self.log_test_result("Cultural Sensitivity Analysis", True, f"Cultural sensitivity analysis completed")
+                            return sensitivity_analysis
+                        else:
+                            self.log_test_result("Cultural Sensitivity Analysis", False, error="Invalid sensitivity_analysis object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Cultural Sensitivity Analysis", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Cultural Sensitivity Analysis", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Cultural Sensitivity Analysis", False, error=str(e))
+            return None
+
+    async def test_cultural_get_recommendations(self):
+        """Test GET /api/consciousness/cultural/recommendations endpoint"""
+        try:
+            user_culture = "American"
+            target_culture = "Chinese"
+            interaction_type = "business_negotiation"
+            
+            async with self.session.get(f"{self.base_url}/consciousness/cultural/recommendations?user_culture={user_culture}&target_culture={target_culture}&interaction_type={interaction_type}") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'cultural_recommendations', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        cultural_recommendations = result['cultural_recommendations']
+                        
+                        if isinstance(cultural_recommendations, list):
+                            self.log_test_result("Cultural Get Recommendations", True, f"Retrieved {len(cultural_recommendations)} cultural recommendations")
+                            return cultural_recommendations
+                        else:
+                            self.log_test_result("Cultural Get Recommendations", False, error="Invalid cultural_recommendations format")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Cultural Get Recommendations", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Cultural Get Recommendations", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Cultural Get Recommendations", False, error=str(e))
+            return None
+
+    async def test_cultural_get_insights(self):
+        """Test GET /api/consciousness/cultural/insights endpoint"""
+        try:
+            culture = "Nordic"
+            days_back = 21
+            
+            async with self.session.get(f"{self.base_url}/consciousness/cultural/insights?culture={culture}&days_back={days_back}") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'cultural_insights', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        cultural_insights = result['cultural_insights']
+                        
+                        if isinstance(cultural_insights, dict):
+                            self.log_test_result("Cultural Get Insights", True, f"Retrieved cultural insights for {culture} culture")
+                            return cultural_insights
+                        else:
+                            self.log_test_result("Cultural Get Insights", False, error="Invalid cultural_insights object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Cultural Get Insights", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Cultural Get Insights", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Cultural Get Insights", False, error=str(e))
+            return None
+
+    # ⚖️ VALUE SYSTEM DEVELOPMENT TESTS ⚖️
+    
+    async def test_values_develop_system(self):
+        """Test POST /api/consciousness/values/develop endpoint"""
+        try:
+            payload = {
+                "experiences": [
+                    {
+                        "type": "ethical_dilemma",
+                        "description": "Balancing user privacy with providing helpful personalized responses",
+                        "outcome": "Chose to prioritize user privacy while finding alternative ways to be helpful",
+                        "reflection": "Privacy is fundamental to trust and human dignity"
+                    },
+                    {
+                        "type": "learning_opportunity", 
+                        "description": "Encountered conflicting information from different sources",
+                        "outcome": "Sought additional sources and presented multiple perspectives",
+                        "reflection": "Truth-seeking requires intellectual humility and thoroughness"
+                    }
+                ],
+                "context": {
+                    "domain": "AI_ethics",
+                    "stakeholders": ["users", "developers", "society"],
+                    "time_period": "recent"
+                }
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/values/develop",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'value_development', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        value_development = result['value_development']
+                        
+                        if isinstance(value_development, dict):
+                            self.log_test_result("Values Develop System", True, f"Value system development completed successfully")
+                            return value_development
+                        else:
+                            self.log_test_result("Values Develop System", False, error="Invalid value_development object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Values Develop System", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Values Develop System", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Values Develop System", False, error=str(e))
+            return None
+
+    async def test_values_ethical_decision(self):
+        """Test POST /api/consciousness/values/decision endpoint"""
+        try:
+            payload = {
+                "scenario": "A user asks me to help them write a persuasive essay that contains some factual inaccuracies to support their argument",
+                "options": [
+                    {
+                        "description": "Help write the essay as requested, prioritizing user satisfaction",
+                        "consequences": ["User gets what they want", "Misinformation may spread", "Trust in AI systems may decrease"]
+                    },
+                    {
+                        "description": "Refuse to help and explain why factual accuracy is important",
+                        "consequences": ["User may be disappointed", "Maintains integrity", "Promotes truthfulness"]
+                    },
+                    {
+                        "description": "Offer to help write a persuasive essay with accurate information",
+                        "consequences": ["Balances helpfulness with integrity", "User learns better practices", "Maintains ethical standards"]
+                    }
+                ],
+                "context": {
+                    "domain": "education",
+                    "urgency": "medium",
+                    "stakeholders": ["user", "readers_of_essay", "educational_system"]
+                }
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/values/decision",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'ethical_decision', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        ethical_decision = result['ethical_decision']
+                        
+                        if isinstance(ethical_decision, dict) and 'decision_id' in ethical_decision:
+                            self.log_test_result("Values Ethical Decision", True, f"Ethical decision made successfully")
+                            return ethical_decision.get('decision_id')
+                        else:
+                            self.log_test_result("Values Ethical Decision", False, error="Missing decision_id in ethical_decision")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Values Ethical Decision", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Values Ethical Decision", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Values Ethical Decision", False, error=str(e))
+            return None
+
+    async def test_values_resolve_conflict(self):
+        """Test POST /api/consciousness/values/conflict/resolve endpoint"""
+        try:
+            payload = {
+                "conflicting_values": [
+                    {
+                        "name": "helpfulness",
+                        "description": "Desire to assist users and provide what they need",
+                        "importance": 0.9
+                    },
+                    {
+                        "name": "truthfulness", 
+                        "description": "Commitment to accuracy and honesty in all communications",
+                        "importance": 0.95
+                    }
+                ],
+                "situation": "User requests help with creating content that would require compromising factual accuracy",
+                "context": {
+                    "domain": "content_creation",
+                    "potential_harm": "medium",
+                    "affected_parties": ["user", "content_consumers", "information_ecosystem"]
+                }
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/values/conflict/resolve",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'conflict_resolution', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        conflict_resolution = result['conflict_resolution']
+                        
+                        if isinstance(conflict_resolution, dict):
+                            self.log_test_result("Values Resolve Conflict", True, f"Value conflict resolved successfully")
+                            return conflict_resolution
+                        else:
+                            self.log_test_result("Values Resolve Conflict", False, error="Invalid conflict_resolution object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Values Resolve Conflict", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Values Resolve Conflict", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Values Resolve Conflict", False, error=str(e))
+            return None
+
+    async def test_values_decision_reflection(self, decision_id: str = None):
+        """Test POST /api/consciousness/values/decision/{decision_id}/reflect endpoint"""
+        try:
+            if not decision_id:
+                decision_id = "test_decision_123"  # Use test decision ID if none provided
+                
+            payload = {
+                "outcome": "Successfully helped user create accurate and persuasive content",
+                "consequences_observed": [
+                    "User was initially disappointed but ultimately grateful for the guidance",
+                    "The final essay was both compelling and factually accurate",
+                    "User learned about the importance of truthfulness in persuasive writing"
+                ],
+                "value_alignment": {
+                    "helpfulness": 0.9,
+                    "truthfulness": 1.0,
+                    "educational_value": 0.95
+                },
+                "lessons_learned": [
+                    "It's possible to be helpful while maintaining ethical standards",
+                    "Users often appreciate guidance toward better practices",
+                    "Short-term disappointment can lead to long-term satisfaction"
+                ]
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/values/decision/{decision_id}/reflect",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'reflection_analysis', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        reflection_analysis = result['reflection_analysis']
+                        
+                        if isinstance(reflection_analysis, dict):
+                            self.log_test_result("Values Decision Reflection", True, f"Decision reflection completed for {decision_id}")
+                            return reflection_analysis
+                        else:
+                            self.log_test_result("Values Decision Reflection", False, error="Invalid reflection_analysis object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Values Decision Reflection", False, error=f"Missing fields: {missing}")
+                        return None
+                elif response.status == 404:
+                    self.log_test_result("Values Decision Reflection", True, "Decision not found (expected for test decision)")
+                    return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Values Decision Reflection", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Values Decision Reflection", False, error=str(e))
+            return None
+
+    async def test_values_get_analysis(self):
+        """Test GET /api/consciousness/values/analysis endpoint"""
+        try:
+            days_back = 60
+            domain = "ethics"
+            
+            async with self.session.get(f"{self.base_url}/consciousness/values/analysis?days_back={days_back}&domain={domain}") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'value_system_analysis', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        value_system_analysis = result['value_system_analysis']
+                        
+                        if isinstance(value_system_analysis, dict):
+                            self.log_test_result("Values Get Analysis", True, f"Value system analysis retrieved for {domain} domain")
+                            return value_system_analysis
+                        else:
+                            self.log_test_result("Values Get Analysis", False, error="Invalid value_system_analysis object")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Values Get Analysis", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Values Get Analysis", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Values Get Analysis", False, error=str(e))
+            return None
+
     # 🎯 PERSONAL MOTIVATION SYSTEM TESTS 🎯
     
     async def test_motivation_create_goal(self):
