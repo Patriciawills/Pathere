@@ -27,6 +27,9 @@ from models.consciousness_models import (
 # Import skill acquisition models
 from models.skill_models import SkillType
 
+# Import Phase 3 routes
+from routes.phase3_routes import phase3_router
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
