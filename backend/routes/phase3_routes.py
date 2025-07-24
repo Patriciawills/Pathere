@@ -75,9 +75,9 @@ class CreativeExplorationRequest(BaseModel):
 
 class PoetryCreationRequest(BaseModel):
     theme: Optional[str] = None
-    style: str = Field("free_verse", regex="^(romantic|minimalist|surreal|classical|modern|experimental)$")
-    emotional_tone: str = Field("contemplation", regex="^(melancholy|joy|contemplation|passion)$")
-    length: str = Field("medium", regex="^(short|medium|long)$")
+    style: str = Field("free_verse", pattern="^(romantic|minimalist|surreal|classical|modern|experimental)$")
+    emotional_tone: str = Field("contemplation", pattern="^(melancholy|joy|contemplation|passion)$")
+    length: str = Field("medium", pattern="^(short|medium|long)$")
 
 class VisualDescriptionRequest(BaseModel):
     subject: str
