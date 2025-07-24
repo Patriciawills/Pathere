@@ -4638,6 +4638,121 @@ class BackendTester:
             self.log_test_result("Phase 2 Consciousness Integration", False, error=str(e))
             return False
     
+    async def run_phase2_consciousness_tests(self):
+        """Run comprehensive tests for Phase 2 Social & Emotional Intelligence components"""
+        logger.info("🚀 STARTING PHASE 2 CONSCIOUSNESS TESTING 🚀")
+        
+        # 💗 ADVANCED EMPATHY ENGINE TESTS (4 endpoints)
+        logger.info("💗 Testing Advanced Empathy Engine...")
+        await self.test_empathy_detect_emotional_state()
+        await self.test_empathy_generate_response()
+        await self.test_empathy_analyze_patterns()
+        await self.test_empathy_get_insights()
+        
+        # 📅 LONG-TERM PLANNING ENGINE TESTS (6 endpoints)
+        logger.info("📅 Testing Long-term Planning Engine...")
+        planning_goal_id = await self.test_planning_create_goal()
+        await self.test_planning_add_milestone(planning_goal_id)
+        await self.test_planning_update_progress(planning_goal_id)
+        await self.test_planning_create_session()
+        await self.test_planning_get_insights()
+        await self.test_planning_get_recommendations()
+        
+        # 🌍 CULTURAL INTELLIGENCE MODULE TESTS (6 endpoints)
+        logger.info("🌍 Testing Cultural Intelligence Module...")
+        await self.test_cultural_detect_context()
+        await self.test_cultural_adapt_communication()
+        await self.test_cultural_sensitivity_analysis()
+        await self.test_cultural_get_recommendations()
+        await self.test_cultural_get_insights()
+        
+        # ⚖️ VALUE SYSTEM DEVELOPMENT TESTS (6 endpoints)
+        logger.info("⚖️ Testing Value System Development...")
+        await self.test_values_develop_system()
+        decision_id = await self.test_values_ethical_decision()
+        await self.test_values_resolve_conflict()
+        await self.test_values_decision_reflection(decision_id)
+        await self.test_values_get_analysis()
+        
+        logger.info("🎉 PHASE 2 CONSCIOUSNESS TESTING COMPLETED 🎉")
+
+    async def run_all_tests(self):
+        """Run all backend API tests"""
+        logger.info("🚀 STARTING COMPREHENSIVE BACKEND TESTING 🚀")
+        
+        # Core API Tests
+        logger.info("🔧 Testing Core API Endpoints...")
+        await self.test_root_endpoint()
+        await self.test_stats_endpoint()
+        
+        # PDF and Data Processing Tests
+        logger.info("📄 Testing PDF Processing...")
+        file_id = await self.test_pdf_upload()
+        await self.test_pdf_processing(file_id)
+        
+        # Data Management Tests
+        logger.info("📚 Testing Data Management...")
+        await self.test_add_vocabulary_data()
+        await self.test_add_grammar_data()
+        
+        # Query Engine Tests
+        logger.info("🔍 Testing Query Engine...")
+        meaning_query_id = await self.test_meaning_query()
+        grammar_query_id = await self.test_grammar_query()
+        usage_query_id = await self.test_usage_query()
+        
+        # Feedback Tests
+        logger.info("💬 Testing Feedback System...")
+        if meaning_query_id:
+            await self.test_feedback_submission(meaning_query_id)
+        
+        # Learning Engine Tests
+        logger.info("🧠 Testing Learning Engine...")
+        await self.test_learning_engine_vocabulary_issue()
+        
+        # Consciousness Engine Tests
+        logger.info("🧠 Testing Consciousness Engine...")
+        await self.test_consciousness_state()
+        await self.test_consciousness_emotions()
+        await self.test_consciousness_interact()
+        await self.test_consciousness_milestones()
+        await self.test_consciousness_personality_update()
+        await self.test_consciousness_integration_with_query()
+        await self.test_consciousness_integration_with_add_data()
+        await self.test_consciousness_growth_through_interactions()
+        await self.test_consciousness_error_handling()
+        
+        # Skill Acquisition Engine Tests
+        logger.info("🎯 Testing Skill Acquisition Engine...")
+        await self.test_skill_available_models()
+        await self.test_skill_capabilities()
+        session_id = await self.test_skill_start_learning()
+        await self.test_skill_start_learning_invalid_type()
+        await self.test_skill_list_sessions()
+        await self.test_skill_get_session_status(session_id)
+        await self.test_skill_get_session_status_invalid_id()
+        await self.test_skill_stop_learning(session_id)
+        await self.test_skill_stop_learning_invalid_id()
+        await self.test_skill_learning_different_types()
+        await self.test_skill_consciousness_integration()
+        await self.test_skill_ollama_connectivity()
+        await self.test_skill_session_lifecycle()
+        
+        # Personal Motivation System Tests
+        logger.info("🎯 Testing Personal Motivation System...")
+        goal_id = await self.test_motivation_create_goal()
+        await self.test_motivation_get_active_goals_default_limit()
+        await self.test_motivation_get_active_goals_custom_limit()
+        await self.test_motivation_work_toward_goal(goal_id)
+        await self.test_motivation_generate_new_goals()
+        await self.test_motivation_get_profile()
+        await self.test_motivation_assess_satisfaction()
+        
+        # 🚀 NEW: Phase 2 Social & Emotional Intelligence Tests
+        await self.run_phase2_consciousness_tests()
+        
+        logger.info("✅ ALL BACKEND TESTS COMPLETED ✅")
+
     async def run_all_tests(self):
         """Run all backend tests"""
         logger.info("🚀 Starting Backend API Tests...")
