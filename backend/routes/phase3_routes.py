@@ -66,8 +66,8 @@ class StorySeriesRequest(BaseModel):
 class HypotheticalScenarioRequest(BaseModel):
     premise: str
     change: str
-    scenario_type: str = Field("speculative", regex="^(counterfactual|speculative|extrapolative|creative|problem_solving)$")
-    depth: str = Field("intermediate", regex="^(surface|intermediate|deep|systems)$")
+    scenario_type: str = Field("speculative", pattern="^(counterfactual|speculative|extrapolative|creative|problem_solving)$")
+    depth: str = Field("intermediate", pattern="^(surface|intermediate|deep|systems)$")
 
 class CreativeExplorationRequest(BaseModel):
     theme: str
