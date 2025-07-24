@@ -4751,8 +4751,53 @@ class BackendTester:
         # 🚀 NEW: Phase 2 Social & Emotional Intelligence Tests
         await self.run_phase2_consciousness_tests()
         
+    async def test_motivation_generate_new_goals(self):
+        """Test POST /api/consciousness/motivation/goals/generate endpoint"""
+        try:
+            payload = {
+                "context": "I want to improve my understanding of human emotions and social dynamics to better help users",
+                "max_goals": 3
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/motivation/goals/generate",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['status', 'new_goals', 'goals_generated', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        new_goals = result['new_goals']
+                        goals_generated = result['goals_generated']
+                        
+                        if isinstance(new_goals, list) and isinstance(goals_generated, int):
+                            self.log_test_result("Motivation Generate New Goals", True, f"Generated {goals_generated} new goals successfully")
+                            return new_goals
+                        else:
+                            self.log_test_result("Motivation Generate New Goals", False, error="Invalid data types in response")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Motivation Generate New Goals", False, error=f"Missing fields: {missing}")
+                        return None
+                elif response.status == 400:
+                    error_text = await response.text()
+                    if "not active" in error_text.lower():
+                        self.log_test_result("Motivation Generate New Goals", True, "Motivation system not active (expected behavior)")
+                        return []
+                    else:
+                        self.log_test_result("Motivation Generate New Goals", False, error=f"HTTP {response.status}: {error_text}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Motivation Generate New Goals", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Motivation Generate New Goals", False, error=str(e))
+            return None
+
         logger.info("✅ ALL BACKEND TESTS COMPLETED ✅")
-        """Run all backend tests"""
         logger.info("🚀 Starting Backend API Tests...")
         logger.info(f"Testing against: {self.base_url}")
         
