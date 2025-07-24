@@ -56,7 +56,7 @@ class LearningOptimizationRequest(BaseModel):
 class StoryGenerationRequest(BaseModel):
     genre: Optional[str] = None
     theme: Optional[str] = None
-    length: str = Field("medium", regex="^(short|medium|long)$")
+    length: str = Field("medium", pattern="^(short|medium|long)$")
     constraints: Optional[Dict[str, Any]] = None
 
 class StorySeriesRequest(BaseModel):
