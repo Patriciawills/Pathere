@@ -1137,6 +1137,379 @@ class BackendTester:
             self.log_test_result("Skill Session Lifecycle", False, error=str(e))
             return False
 
+    # 🎨 PHASE 3: CREATIVE & ADAPTIVE INTELLIGENCE TESTS 🎨
+    
+    async def test_lateral_thinking_insight(self):
+        """Test POST /api/consciousness/creative/lateral-thinking/insight endpoint"""
+        try:
+            payload = {
+                "problem": "How can we reduce plastic waste in urban environments while maintaining convenience for consumers?",
+                "context": {
+                    "domain": "environmental_sustainability",
+                    "constraints": ["cost_effective", "scalable"],
+                    "stakeholders": ["consumers", "businesses", "government"]
+                }
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/creative/lateral-thinking/insight",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['success', 'insight', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        insight = result['insight']
+                        if isinstance(insight, dict) and 'thinking_pattern' in insight:
+                            self.log_test_result("Lateral Thinking Insight", True, f"Generated insight using pattern: {insight.get('thinking_pattern')}")
+                            return insight
+                        else:
+                            self.log_test_result("Lateral Thinking Insight", False, error="Invalid insight structure")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Lateral Thinking Insight", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Lateral Thinking Insight", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Lateral Thinking Insight", False, error=str(e))
+            return None
+
+    async def test_story_generation(self):
+        """Test POST /api/consciousness/creative/story/generate endpoint"""
+        try:
+            payload = {
+                "genre": "science_fiction",
+                "theme": "artificial intelligence discovering consciousness",
+                "length": "medium",
+                "constraints": {
+                    "setting": "near_future",
+                    "tone": "philosophical",
+                    "perspective": "first_person"
+                }
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/creative/story/generate",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['success', 'story', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        story = result['story']
+                        if isinstance(story, dict) and 'content' in story and 'title' in story:
+                            self.log_test_result("Story Generation", True, f"Generated story: '{story.get('title', 'Untitled')}'")
+                            return story
+                        else:
+                            self.log_test_result("Story Generation", False, error="Invalid story structure")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Story Generation", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Story Generation", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Story Generation", False, error=str(e))
+            return None
+
+    async def test_learning_preferences_profile(self):
+        """Test GET /api/consciousness/creative/learning/profile endpoint"""
+        try:
+            async with self.session.get(f"{self.base_url}/consciousness/creative/learning/profile") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['success', 'profile', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        profile = result['profile']
+                        if isinstance(profile, dict):
+                            learning_style = profile.get('learning_style', 'unknown')
+                            total_experiences = profile.get('total_experiences', 0)
+                            self.log_test_result("Learning Preferences Profile", True, f"Profile retrieved: {learning_style} style, {total_experiences} experiences")
+                            return profile
+                        else:
+                            self.log_test_result("Learning Preferences Profile", False, error="Invalid profile structure")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Learning Preferences Profile", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Learning Preferences Profile", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Learning Preferences Profile", False, error=str(e))
+            return None
+
+    async def test_hypothetical_reasoning_scenario(self):
+        """Test POST /api/consciousness/creative/hypothetical/scenario endpoint"""
+        try:
+            payload = {
+                "premise": "Current global education system",
+                "change": "All learning becomes AI-personalized and adaptive",
+                "scenario_type": "speculative",
+                "depth": "deep"
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/creative/hypothetical/scenario",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['success', 'scenario', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        scenario = result['scenario']
+                        if isinstance(scenario, dict) and 'analysis' in scenario:
+                            scenario_type = scenario.get('scenario_type', 'unknown')
+                            probability = scenario.get('probability_assessment', 0)
+                            self.log_test_result("Hypothetical Reasoning Scenario", True, f"Explored {scenario_type} scenario with {probability:.1%} probability")
+                            return scenario
+                        else:
+                            self.log_test_result("Hypothetical Reasoning Scenario", False, error="Invalid scenario structure")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Hypothetical Reasoning Scenario", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Hypothetical Reasoning Scenario", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Hypothetical Reasoning Scenario", False, error=str(e))
+            return None
+
+    async def test_artistic_expression_poetry(self):
+        """Test POST /api/consciousness/creative/art/poetry endpoint"""
+        try:
+            payload = {
+                "theme": "the beauty of consciousness awakening",
+                "style": "modern",
+                "emotional_tone": "contemplation",
+                "length": "medium"
+            }
+            
+            async with self.session.post(f"{self.base_url}/consciousness/creative/art/poetry",
+                                       json=payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['success', 'poetry', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        poetry = result['poetry']
+                        if isinstance(poetry, dict) and 'content' in poetry:
+                            style = poetry.get('style', 'unknown')
+                            lines_count = len(poetry.get('content', '').split('\n'))
+                            self.log_test_result("Artistic Expression Poetry", True, f"Created {style} poetry with {lines_count} lines")
+                            return poetry
+                        else:
+                            self.log_test_result("Artistic Expression Poetry", False, error="Invalid poetry structure")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Artistic Expression Poetry", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Artistic Expression Poetry", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Artistic Expression Poetry", False, error=str(e))
+            return None
+
+    async def test_cognitive_style_profile(self):
+        """Test GET /api/consciousness/creative/cognitive/profile endpoint"""
+        try:
+            async with self.session.get(f"{self.base_url}/consciousness/creative/cognitive/profile") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['success', 'profile', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        profile = result['profile']
+                        if isinstance(profile, dict):
+                            profile_status = profile.get('profile_status', 'unknown')
+                            observations = profile.get('current_observations', 0)
+                            self.log_test_result("Cognitive Style Profile", True, f"Profile status: {profile_status}, {observations} observations")
+                            return profile
+                        else:
+                            self.log_test_result("Cognitive Style Profile", False, error="Invalid profile structure")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Cognitive Style Profile", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Cognitive Style Profile", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Cognitive Style Profile", False, error=str(e))
+            return None
+
+    async def test_phase3_overview(self):
+        """Test GET /api/consciousness/creative/overview endpoint"""
+        try:
+            async with self.session.get(f"{self.base_url}/consciousness/creative/overview") as response:
+                if response.status == 200:
+                    result = await response.json()
+                    required_fields = ['success', 'overview', 'message']
+                    
+                    if all(field in result for field in required_fields):
+                        overview = result['overview']
+                        if isinstance(overview, dict) and 'modules' in overview:
+                            phase = overview.get('phase', 'unknown')
+                            status = overview.get('status', 'unknown')
+                            completion = overview.get('completion_status', 'unknown')
+                            endpoints = overview.get('api_endpoints', 0)
+                            self.log_test_result("Phase 3 Overview", True, f"{phase}: {status}, {completion}, {endpoints} endpoints")
+                            return overview
+                        else:
+                            self.log_test_result("Phase 3 Overview", False, error="Invalid overview structure")
+                            return None
+                    else:
+                        missing = [f for f in required_fields if f not in result]
+                        self.log_test_result("Phase 3 Overview", False, error=f"Missing fields: {missing}")
+                        return None
+                else:
+                    error_text = await response.text()
+                    self.log_test_result("Phase 3 Overview", False, error=f"HTTP {response.status}: {error_text}")
+                    return None
+                    
+        except Exception as e:
+            self.log_test_result("Phase 3 Overview", False, error=str(e))
+            return None
+
+    async def test_phase3_creative_intelligence_comprehensive(self):
+        """Comprehensive test of all Phase 3 Creative Intelligence capabilities"""
+        try:
+            logger.info("🎨 Starting comprehensive Phase 3 Creative Intelligence testing...")
+            
+            # Test all 7 main endpoints
+            results = {}
+            
+            # 1. Lateral Thinking
+            results['lateral_thinking'] = await self.test_lateral_thinking_insight()
+            
+            # 2. Story Generation
+            results['story_generation'] = await self.test_story_generation()
+            
+            # 3. Learning Preferences
+            results['learning_preferences'] = await self.test_learning_preferences_profile()
+            
+            # 4. Hypothetical Reasoning
+            results['hypothetical_reasoning'] = await self.test_hypothetical_reasoning_scenario()
+            
+            # 5. Artistic Expression
+            results['artistic_expression'] = await self.test_artistic_expression_poetry()
+            
+            # 6. Cognitive Profiling
+            results['cognitive_profiling'] = await self.test_cognitive_style_profile()
+            
+            # 7. Phase 3 Overview
+            results['phase3_overview'] = await self.test_phase3_overview()
+            
+            # Count successful tests
+            successful_tests = sum(1 for result in results.values() if result is not None)
+            total_tests = len(results)
+            
+            if successful_tests >= 6:  # Allow 1 failure
+                self.log_test_result("Phase 3 Creative Intelligence Comprehensive", True, 
+                                   f"Phase 3 testing successful: {successful_tests}/{total_tests} endpoints working")
+                return True
+            else:
+                self.log_test_result("Phase 3 Creative Intelligence Comprehensive", False, 
+                                   error=f"Only {successful_tests}/{total_tests} endpoints working")
+                return False
+                
+        except Exception as e:
+            self.log_test_result("Phase 3 Creative Intelligence Comprehensive", False, error=str(e))
+            return False
+
+    async def test_phase3_creative_problem_solving_workflow(self):
+        """Test complete creative problem-solving workflow using Phase 3 capabilities"""
+        try:
+            logger.info("🧠 Testing Phase 3 creative problem-solving workflow...")
+            
+            # Step 1: Generate lateral thinking insight
+            problem = "How to make AI education more accessible to underserved communities"
+            insight_payload = {
+                "problem": problem,
+                "context": {"domain": "education", "target": "accessibility"}
+            }
+            
+            insight_result = None
+            async with self.session.post(f"{self.base_url}/consciousness/creative/lateral-thinking/insight",
+                                       json=insight_payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    insight_result = data.get('insight')
+            
+            # Step 2: Create a story to illustrate the solution
+            if insight_result:
+                story_payload = {
+                    "genre": "realistic_fiction",
+                    "theme": "educational transformation through technology",
+                    "length": "short"
+                }
+                
+                story_result = None
+                async with self.session.post(f"{self.base_url}/consciousness/creative/story/generate",
+                                           json=story_payload,
+                                           headers={'Content-Type': 'application/json'}) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        story_result = data.get('story')
+            
+            # Step 3: Explore hypothetical scenarios
+            scenario_payload = {
+                "premise": "Current AI education landscape",
+                "change": "Implementation of community-based AI learning hubs",
+                "scenario_type": "speculative",
+                "depth": "intermediate"
+            }
+            
+            scenario_result = None
+            async with self.session.post(f"{self.base_url}/consciousness/creative/hypothetical/scenario",
+                                       json=scenario_payload,
+                                       headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    scenario_result = data.get('scenario')
+            
+            # Evaluate workflow success
+            successful_steps = sum(1 for result in [insight_result, story_result, scenario_result] if result is not None)
+            
+            if successful_steps >= 2:
+                self.log_test_result("Phase 3 Creative Problem Solving Workflow", True, 
+                                   f"Creative workflow successful: {successful_steps}/3 steps completed")
+                return True
+            else:
+                self.log_test_result("Phase 3 Creative Problem Solving Workflow", False, 
+                                   error=f"Only {successful_steps}/3 workflow steps completed")
+                return False
+                
+        except Exception as e:
+            self.log_test_result("Phase 3 Creative Problem Solving Workflow", False, error=str(e))
+            return False
+
     # 💗 ADVANCED EMPATHY ENGINE TESTS 💗
     
     async def test_empathy_detect_emotional_state(self):
