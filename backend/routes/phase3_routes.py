@@ -81,8 +81,8 @@ class PoetryCreationRequest(BaseModel):
 
 class VisualDescriptionRequest(BaseModel):
     subject: str
-    style: str = Field("impressionistic", regex="^(romantic|minimalist|surreal|classical|modern|experimental)$")
-    emotional_tone: str = Field("wonder", regex="^(melancholy|joy|contemplation|passion)$")
+    style: str = Field("impressionistic", pattern="^(romantic|minimalist|surreal|classical|modern|experimental)$")
+    emotional_tone: str = Field("wonder", pattern="^(melancholy|joy|contemplation|passion)$")
 
 class MetaphorCreationRequest(BaseModel):
     concept: str
