@@ -102,7 +102,7 @@ class CognitiveObservationRequest(BaseModel):
     context: Optional[Dict[str, Any]] = None
 
 class CognitiveOptimizationRequest(BaseModel):
-    target_area: str = Field("effectiveness", regex="^(effectiveness|speed|accuracy|satisfaction)$")
+    target_area: str = Field("effectiveness", pattern="^(effectiveness|speed|accuracy|satisfaction)$")
 
 # ============================================================================
 # LATERAL THINKING MODULE ENDPOINTS
