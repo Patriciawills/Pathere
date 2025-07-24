@@ -269,7 +269,7 @@ class CognitiveStyleProfiler:
             insights.append("This cognitive approach is highly effective and personally satisfying")
         elif speed > 0.8 and accuracy < 0.6:
             insights.append("Fast processing may benefit from additional accuracy checks")
-        elif accuracy > 0.8 but speed < 0.4:
+        elif accuracy > 0.8 and speed < 0.4:
             insights.append("High accuracy suggests potential for maintaining quality while improving speed")
         
         # Balanced performance insight
