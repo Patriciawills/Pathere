@@ -1470,6 +1470,696 @@ async def assess_goal_satisfaction(days_back: int = 7):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# 💗 ADVANCED EMPATHY ENGINE ENDPOINTS 💗
+
+@api_router.post("/consciousness/empathy/detect")
+async def detect_emotional_state(request: dict):
+    """Detect emotional states from text with advanced pattern recognition"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize empathy engine if not exists
+        if not hasattr(learning_engine, 'empathy_engine'):
+            from core.consciousness.empathy_engine import AdvancedEmpathyEngine
+            learning_engine.empathy_engine = AdvancedEmpathyEngine()
+        
+        text = request.get("text", "")
+        context = request.get("context", {})
+        
+        if not text:
+            raise HTTPException(status_code=400, detail="text is required")
+        
+        emotional_states = learning_engine.empathy_engine.detect_emotional_state(text, context)
+        
+        return {
+            "status": "success",
+            "emotional_states": [state.to_dict() for state in emotional_states],
+            "primary_emotion": emotional_states[0].to_dict() if emotional_states else None,
+            "total_emotions_detected": len(emotional_states),
+            "message": "Emotional states detected successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/empathy/respond")
+async def generate_empathetic_response(request: dict):
+    """Generate empathetic response based on detected emotional states"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize empathy engine if not exists
+        if not hasattr(learning_engine, 'empathy_engine'):
+            from core.consciousness.empathy_engine import AdvancedEmpathyEngine
+            learning_engine.empathy_engine = AdvancedEmpathyEngine()
+        
+        text = request.get("text", "")
+        user_id = request.get("user_id")
+        conversation_context = request.get("conversation_context", {})
+        
+        if not text:
+            raise HTTPException(status_code=400, detail="text is required")
+        
+        # First detect emotional states
+        emotional_states = learning_engine.empathy_engine.detect_emotional_state(text, conversation_context)
+        
+        # Generate empathetic response
+        empathic_response = learning_engine.empathy_engine.generate_empathetic_response(
+            emotional_states, user_id, conversation_context
+        )
+        
+        return {
+            "status": "success",
+            "empathic_response": empathic_response.to_dict(),
+            "detected_emotions": [state.to_dict() for state in emotional_states],
+            "message": "Empathetic response generated successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/empathy/patterns/{user_id}")
+async def analyze_emotional_patterns(user_id: str, days_back: int = 30):
+    """Analyze emotional patterns for a user over time"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize empathy engine if not exists
+        if not hasattr(learning_engine, 'empathy_engine'):
+            from core.consciousness.empathy_engine import AdvancedEmpathyEngine
+            learning_engine.empathy_engine = AdvancedEmpathyEngine()
+        
+        patterns = learning_engine.empathy_engine.analyze_emotional_patterns(user_id, days_back)
+        
+        return {
+            "status": "success",
+            "emotional_patterns": patterns,
+            "user_id": user_id,
+            "analysis_period": days_back,
+            "message": "Emotional patterns analyzed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/empathy/insights")
+async def get_empathy_insights(user_id: str = None):
+    """Get insights about empathy interactions"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize empathy engine if not exists
+        if not hasattr(learning_engine, 'empathy_engine'):
+            from core.consciousness.empathy_engine import AdvancedEmpathyEngine
+            learning_engine.empathy_engine = AdvancedEmpathyEngine()
+        
+        insights = learning_engine.empathy_engine.get_empathy_insights(user_id)
+        
+        return {
+            "status": "success",
+            "empathy_insights": insights,
+            "message": "Empathy insights retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 📅 LONG-TERM PLANNING ENGINE ENDPOINTS 📅
+
+@api_router.post("/consciousness/planning/goal/create")
+async def create_planning_goal(request: dict):
+    """Create a new goal with comprehensive planning details"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize planning engine if not exists
+        if not hasattr(learning_engine, 'planning_engine'):
+            from core.consciousness.planning_engine import LongTermPlanningEngine
+            learning_engine.planning_engine = LongTermPlanningEngine()
+        
+        from core.consciousness.planning_engine import GoalCategory, PlanningHorizon, PriorityLevel
+        from datetime import datetime, timedelta
+        
+        name = request.get("name")
+        description = request.get("description")
+        category_str = request.get("category")
+        horizon_str = request.get("horizon")
+        priority_str = request.get("priority")
+        target_days = request.get("target_days")
+        resources_needed = request.get("resources_needed", [])
+        dependencies = request.get("dependencies", [])
+        
+        if not all([name, description, category_str, horizon_str, priority_str]):
+            raise HTTPException(
+                status_code=400,
+                detail="name, description, category, horizon, and priority are required"
+            )
+        
+        try:
+            category = GoalCategory(category_str)
+            horizon = PlanningHorizon(horizon_str)
+            priority = PriorityLevel(priority_str)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=f"Invalid enum value: {str(e)}")
+        
+        target_date = None
+        if target_days:
+            target_date = datetime.now() + timedelta(days=target_days)
+        
+        goal = learning_engine.planning_engine.create_goal(
+            name=name,
+            description=description,
+            category=category,
+            horizon=horizon,
+            priority=priority,
+            target_date=target_date,
+            resources_needed=resources_needed,
+            dependencies=dependencies
+        )
+        
+        return {
+            "status": "success",
+            "goal": goal.to_dict(),
+            "message": "Planning goal created successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/planning/goal/{goal_id}/milestone")
+async def add_goal_milestone(goal_id: str, request: dict):
+    """Add a milestone to a goal"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize planning engine if not exists
+        if not hasattr(learning_engine, 'planning_engine'):
+            from core.consciousness.planning_engine import LongTermPlanningEngine
+            learning_engine.planning_engine = LongTermPlanningEngine()
+        
+        name = request.get("name")
+        description = request.get("description")
+        completion_criteria = request.get("completion_criteria", [])
+        target_days = request.get("target_days")
+        
+        if not all([name, description]):
+            raise HTTPException(status_code=400, detail="name and description are required")
+        
+        target_date = None
+        if target_days:
+            from datetime import datetime, timedelta
+            target_date = datetime.now() + timedelta(days=target_days)
+        
+        milestone = learning_engine.planning_engine.add_milestone(
+            goal_id=goal_id,
+            name=name,
+            description=description,
+            completion_criteria=completion_criteria,
+            target_date=target_date
+        )
+        
+        return {
+            "status": "success",
+            "milestone": milestone.to_dict(),
+            "message": "Milestone added successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.put("/consciousness/planning/goal/{goal_id}/progress")
+async def update_goal_progress(goal_id: str, request: dict):
+    """Update goal progress and analyze advancement"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize planning engine if not exists
+        if not hasattr(learning_engine, 'planning_engine'):
+            from core.consciousness.planning_engine import LongTermPlanningEngine
+            learning_engine.planning_engine = LongTermPlanningEngine()
+        
+        progress_percentage = request.get("progress_percentage")
+        notes = request.get("notes")
+        
+        if progress_percentage is None:
+            raise HTTPException(status_code=400, detail="progress_percentage is required")
+        
+        update_summary = learning_engine.planning_engine.update_goal_progress(
+            goal_id=goal_id,
+            progress_percentage=progress_percentage,
+            notes=notes
+        )
+        
+        return {
+            "status": "success",
+            "progress_update": update_summary,
+            "message": "Goal progress updated successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/planning/session")
+async def conduct_planning_session(request: dict):
+    """Conduct a planning/review session"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize planning engine if not exists
+        if not hasattr(learning_engine, 'planning_engine'):
+            from core.consciousness.planning_engine import LongTermPlanningEngine
+            learning_engine.planning_engine = LongTermPlanningEngine()
+        
+        session_type = request.get("session_type", "weekly")
+        
+        session = learning_engine.planning_engine.conduct_planning_session(session_type)
+        
+        return {
+            "status": "success",
+            "planning_session": session.to_dict(),
+            "message": f"Planning session ({session_type}) completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/planning/insights")
+async def get_planning_insights():
+    """Get comprehensive planning insights and analytics"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize planning engine if not exists
+        if not hasattr(learning_engine, 'planning_engine'):
+            from core.consciousness.planning_engine import LongTermPlanningEngine
+            learning_engine.planning_engine = LongTermPlanningEngine()
+        
+        insights = learning_engine.planning_engine.get_planning_insights()
+        
+        return {
+            "status": "success",
+            "planning_insights": insights,
+            "message": "Planning insights retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/planning/recommendations")
+async def get_goal_recommendations(limit: int = 5):
+    """Get recommendations for goal management"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize planning engine if not exists
+        if not hasattr(learning_engine, 'planning_engine'):
+            from core.consciousness.planning_engine import LongTermPlanningEngine
+            learning_engine.planning_engine = LongTermPlanningEngine()
+        
+        recommendations = learning_engine.planning_engine.get_goal_recommendations(limit)
+        
+        return {
+            "status": "success",
+            "recommendations": recommendations,
+            "total_recommendations": len(recommendations),
+            "message": "Goal recommendations retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 🌍 CULTURAL INTELLIGENCE MODULE ENDPOINTS 🌍
+
+@api_router.post("/consciousness/cultural/detect")
+async def detect_cultural_context(request: dict):
+    """Detect cultural context from text and user metadata"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize cultural intelligence if not exists
+        if not hasattr(learning_engine, 'cultural_intelligence'):
+            from core.consciousness.cultural_intelligence import CulturalIntelligenceModule
+            learning_engine.cultural_intelligence = CulturalIntelligenceModule()
+        
+        text = request.get("text", "")
+        user_metadata = request.get("user_metadata", {})
+        
+        if not text:
+            raise HTTPException(status_code=400, detail="text is required")
+        
+        cultural_context = learning_engine.cultural_intelligence.detect_cultural_context(text, user_metadata)
+        
+        return {
+            "status": "success",
+            "cultural_context": cultural_context,
+            "message": "Cultural context detected successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/cultural/adapt")
+async def adapt_communication_style(request: dict):
+    """Adapt communication style for cultural appropriateness"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize cultural intelligence if not exists
+        if not hasattr(learning_engine, 'cultural_intelligence'):
+            from core.consciousness.cultural_intelligence import CulturalIntelligenceModule
+            learning_engine.cultural_intelligence = CulturalIntelligenceModule()
+        
+        from core.consciousness.cultural_intelligence import CommunicationStyle
+        
+        message = request.get("message", "")
+        target_style_str = request.get("target_style", "")
+        cultural_context = request.get("cultural_context", {})
+        
+        if not all([message, target_style_str]):
+            raise HTTPException(status_code=400, detail="message and target_style are required")
+        
+        try:
+            target_style = CommunicationStyle(target_style_str)
+        except ValueError:
+            valid_styles = [style.value for style in CommunicationStyle]
+            raise HTTPException(status_code=400, detail=f"Invalid target_style. Valid styles: {valid_styles}")
+        
+        adapted_message = learning_engine.cultural_intelligence.adapt_communication_style(
+            message, target_style, cultural_context
+        )
+        
+        return {
+            "status": "success",
+            "original_message": message,
+            "adapted_message": adapted_message,
+            "target_style": target_style_str,
+            "message": "Communication style adapted successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/cultural/sensitivity")
+async def analyze_cultural_sensitivity(request: dict):
+    """Analyze cultural sensitivity of a message"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize cultural intelligence if not exists
+        if not hasattr(learning_engine, 'cultural_intelligence'):
+            from core.consciousness.cultural_intelligence import CulturalIntelligenceModule
+            learning_engine.cultural_intelligence = CulturalIntelligenceModule()
+        
+        message = request.get("message", "")
+        cultural_context = request.get("cultural_context", {})
+        
+        if not message:
+            raise HTTPException(status_code=400, detail="message is required")
+        
+        sensitivity_analysis = learning_engine.cultural_intelligence.analyze_cultural_sensitivity(
+            message, cultural_context
+        )
+        
+        return {
+            "status": "success",
+            "sensitivity_analysis": sensitivity_analysis,
+            "message": "Cultural sensitivity analyzed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/cultural/recommendations")
+async def get_cultural_recommendations(user_id: str = None, cultural_context: dict = None):
+    """Get cultural communication recommendations"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize cultural intelligence if not exists
+        if not hasattr(learning_engine, 'cultural_intelligence'):
+            from core.consciousness.cultural_intelligence import CulturalIntelligenceModule
+            learning_engine.cultural_intelligence = CulturalIntelligenceModule()
+        
+        recommendations = learning_engine.cultural_intelligence.get_cultural_recommendations(
+            user_id, cultural_context
+        )
+        
+        return {
+            "status": "success",
+            "cultural_recommendations": recommendations,
+            "total_recommendations": len(recommendations),
+            "message": "Cultural recommendations retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/cultural/insights")
+async def get_cultural_insights():
+    """Get comprehensive cultural intelligence insights"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize cultural intelligence if not exists
+        if not hasattr(learning_engine, 'cultural_intelligence'):
+            from core.consciousness.cultural_intelligence import CulturalIntelligenceModule
+            learning_engine.cultural_intelligence = CulturalIntelligenceModule()
+        
+        insights = learning_engine.cultural_intelligence.get_cultural_insights()
+        
+        return {
+            "status": "success",
+            "cultural_insights": insights,
+            "message": "Cultural intelligence insights retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 💎 VALUE SYSTEM DEVELOPMENT ENDPOINTS 💎
+
+@api_router.post("/consciousness/values/develop")
+async def develop_value(request: dict):
+    """Develop a new value or strengthen an existing one"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize value system if not exists
+        if not hasattr(learning_engine, 'value_system'):
+            from core.consciousness.value_system import ValueSystemDevelopment
+            learning_engine.value_system = ValueSystemDevelopment()
+        
+        from core.consciousness.value_system import CoreValue, ValueIntensity
+        
+        core_value_str = request.get("core_value")
+        intensity_str = request.get("intensity")
+        personal_description = request.get("personal_description")
+        formative_experiences = request.get("formative_experiences", [])
+        
+        if not all([core_value_str, intensity_str]):
+            raise HTTPException(status_code=400, detail="core_value and intensity are required")
+        
+        try:
+            core_value = CoreValue(core_value_str)
+            intensity = ValueIntensity(intensity_str)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=f"Invalid enum value: {str(e)}")
+        
+        value_principle = learning_engine.value_system.develop_value(
+            core_value=core_value,
+            intensity=intensity,
+            personal_description=personal_description,
+            formative_experiences=formative_experiences
+        )
+        
+        return {
+            "status": "success",
+            "value_principle": value_principle.to_dict(),
+            "message": "Value developed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/values/decision")
+async def make_ethical_decision(request: dict):
+    """Make an ethical decision using the value system"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize value system if not exists
+        if not hasattr(learning_engine, 'value_system'):
+            from core.consciousness.value_system import ValueSystemDevelopment
+            learning_engine.value_system = ValueSystemDevelopment()
+        
+        from core.consciousness.value_system import DecisionContext
+        
+        situation = request.get("situation")
+        context_str = request.get("context")
+        options = request.get("options", [])
+        stakeholders = request.get("stakeholders", [])
+        
+        if not all([situation, context_str, options]):
+            raise HTTPException(status_code=400, detail="situation, context, and options are required")
+        
+        try:
+            context = DecisionContext(context_str)
+        except ValueError:
+            valid_contexts = [ctx.value for ctx in DecisionContext]
+            raise HTTPException(status_code=400, detail=f"Invalid context. Valid contexts: {valid_contexts}")
+        
+        decision = learning_engine.value_system.make_ethical_decision(
+            situation=situation,
+            context=context,
+            options=options,
+            stakeholders=stakeholders
+        )
+        
+        return {
+            "status": "success",
+            "ethical_decision": decision.to_dict(),
+            "message": "Ethical decision made successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/values/conflict/resolve")
+async def resolve_value_conflict(request: dict):
+    """Resolve a conflict between competing values"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize value system if not exists
+        if not hasattr(learning_engine, 'value_system'):
+            from core.consciousness.value_system import ValueSystemDevelopment
+            learning_engine.value_system = ValueSystemDevelopment()
+        
+        from core.consciousness.value_system import CoreValue
+        
+        conflicting_values_str = request.get("conflicting_values", [])
+        context = request.get("context", "")
+        description = request.get("description", "")
+        
+        if not all([conflicting_values_str, context, description]):
+            raise HTTPException(status_code=400, detail="conflicting_values, context, and description are required")
+        
+        try:
+            conflicting_values = [CoreValue(val) for val in conflicting_values_str]
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=f"Invalid core value: {str(e)}")
+        
+        conflict_resolution = learning_engine.value_system.resolve_value_conflict(
+            conflicting_values=conflicting_values,
+            context=context,
+            description=description
+        )
+        
+        return {
+            "status": "success",
+            "conflict_resolution": conflict_resolution.to_dict(),
+            "message": "Value conflict resolved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/consciousness/values/decision/{decision_id}/reflect")
+async def reflect_on_decision(decision_id: str, request: dict):
+    """Reflect on the outcomes of a previous decision"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize value system if not exists
+        if not hasattr(learning_engine, 'value_system'):
+            from core.consciousness.value_system import ValueSystemDevelopment
+            learning_engine.value_system = ValueSystemDevelopment()
+        
+        actual_outcomes = request.get("actual_outcomes", [])
+        satisfaction_rating = request.get("satisfaction_rating")
+        lessons_learned = request.get("lessons_learned", [])
+        
+        if satisfaction_rating is None:
+            raise HTTPException(status_code=400, detail="satisfaction_rating is required")
+        
+        reflection_analysis = learning_engine.value_system.reflect_on_decision(
+            decision_id=decision_id,
+            actual_outcomes=actual_outcomes,
+            satisfaction_rating=satisfaction_rating,
+            lessons_learned=lessons_learned
+        )
+        
+        return {
+            "status": "success",
+            "reflection_analysis": reflection_analysis,
+            "message": "Decision reflection completed successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/consciousness/values/analysis")
+async def get_value_system_analysis():
+    """Get comprehensive analysis of the current value system"""
+    try:
+        if not learning_engine.is_conscious:
+            raise HTTPException(status_code=400, detail="Consciousness engine not active")
+        
+        # Initialize value system if not exists
+        if not hasattr(learning_engine, 'value_system'):
+            from core.consciousness.value_system import ValueSystemDevelopment
+            learning_engine.value_system = ValueSystemDevelopment()
+        
+        analysis = learning_engine.value_system.get_value_system_analysis()
+        
+        return {
+            "status": "success",
+            "value_system_analysis": analysis,
+            "message": "Value system analysis retrieved successfully"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Skill Acquisition Engine Endpoints
 @api_router.post("/skills/learn")
 async def start_skill_learning(request: dict):
